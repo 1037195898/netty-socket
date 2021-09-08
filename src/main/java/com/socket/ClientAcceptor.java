@@ -1,7 +1,5 @@
 package com.socket;
 
-import com.adapter.ActionChannelAdapter;
-import com.initializer.ByteChannelHandler;
 import com.util.ActionUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -13,7 +11,6 @@ import java.net.URI;
 
 public class ClientAcceptor {
 
-    private final ActionChannelAdapter actionChannelAdapter;
     private Bootstrap bootstrap;
     private NioEventLoopGroup worker;
     private ChannelFuture channelFuture;
@@ -24,10 +21,8 @@ public class ClientAcceptor {
 
     public ClientAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
         init();
-        actionChannelAdapter = new ActionChannelAdapter();
         ActionUtils.getInst().addSessionListener(sessionListener);
         //添加handler，管道中的处理器，通过ChannelInitializer来构造
-        if (channelHandler == null) channelHandler = new ByteChannelHandler(actionChannelAdapter);
         bootstrap.handler(channelHandler);
     }
 
@@ -59,6 +54,39 @@ public class ClientAcceptor {
         bootstrap.group(worker);
         //设置通道
         bootstrap.channel(NioSocketChannel.class);
+    }
+
+    /**
+     * 注册动作
+     *
+     * @param handler 处理器
+     * @param actions 动作
+     */
+    public void registerAction(ActionHandler<?> handler, int... actions) {
+        for (int action : actions) {
+            ActionUtils.getInst().registerAction(action, handler);
+        }
+    }
+
+    /**
+     * 删除动作
+     *
+     * @param actions 动作
+     */
+    public void removeAction(int... actions) {
+        for (int action : actions) {
+            ActionUtils.getInst().removeAction(action);
+        }
+    }
+
+    /**
+     * 获取动作
+     *
+     * @param action 动作
+     * @return
+     */
+    public ActionHandler<?> getAction(int action) {
+        return ActionUtils.getInst().getAction(action);
     }
 
 }

@@ -2,6 +2,7 @@ package com.adapter;
 
 import com.socket.ActionData;
 import com.util.ActionUtils;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.Map;
 /**
  * 带有派发事件功能的监听器
  */
+@ChannelHandler.Sharable
 public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 
     protected Map<String, Long> sessionVerify = new HashMap<>();

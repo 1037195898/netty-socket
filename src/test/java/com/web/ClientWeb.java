@@ -9,8 +9,11 @@ import com.socket.ClientAcceptor;
 import com.socket.SessionListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 public class ClientWeb implements SessionListener {
@@ -22,9 +25,9 @@ public class ClientWeb implements SessionListener {
                 new WebSocketChannelInitializer(uri,
     //                new TestMessageEncoder(),
                     new WebSocketDecoder(),
-                    new WebSocketEncoder(),
-                    new WebChannelAdapter()
+                    new WebSocketEncoder()
         ));
+        clientAcceptor.registerAction(new WebHandler(), 100);
         try {
             clientAcceptor.connect(uri);
             System.out.println("客户端启动");
@@ -82,7 +85,14 @@ public class ClientWeb implements SessionListener {
 
     @Override
     public void notRegAction(ChannelHandlerContext session, Object message) {
-
+        if (message instanceof ActionData<?>) {
+            if (((ActionData<?>) message).getAction() == -100) {
+                LoggerFactory.getLogger(getClass()).debug("notRegAction:" +
+                        StringUtils.toEncodedString(((ActionData<?>) message).getBuf(), Charset.defaultCharset()));
+            } else {
+                LoggerFactory.getLogger(getClass()).debug("notRegAction:" + message);
+            }
+        }
     }
 
 }

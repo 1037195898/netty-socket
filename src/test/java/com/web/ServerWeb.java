@@ -1,5 +1,7 @@
 package com.web;
 
+import com.adapter.MessageAdapter;
+import com.entity.GameInput;
 import com.initializer.WebSocketChannelInitializer;
 import com.parse.WebSocketDecoder;
 import com.parse.WebSocketEncoder;
@@ -10,8 +12,11 @@ import com.socket.SessionListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 public class ServerWeb implements SessionListener {
@@ -23,11 +28,10 @@ public class ServerWeb implements SessionListener {
                 new WebSocketChannelInitializer(
                         new WebSocketDecoder()
                         , new WebSocketEncoder()
-                        , new WebChannelAdapter()
+                        , new MessageAdapter()
                         , new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
                 ));
-
-        serverAcceptor.registerAction(new TestHandler(), 100);
+        serverAcceptor.registerAction(new WebHandler(), 100);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");
     }
@@ -70,19 +74,14 @@ public class ServerWeb implements SessionListener {
 
     @Override
     public void notRegAction(ChannelHandlerContext session, Object message) {
-
-    }
-
-}
-
-class TestHandler implements ActionHandler<Object> {
-
-    @Override
-    public void execute(ActionData<Object> actionData, ChannelHandlerContext session) {
-
-        System.out.println(actionData.getAction());
-        System.out.println(new String(actionData.getBuf()));
-
+        if (message instanceof ActionData<?>) {
+            if (((ActionData<?>) message).getAction() == -100) {
+                LoggerFactory.getLogger(getClass()).debug("notRegAction:" +
+                        StringUtils.toEncodedString(((ActionData<?>) message).getBuf(), Charset.defaultCharset()));
+            } else {
+                LoggerFactory.getLogger(getClass()).debug("notRegAction:" + message);
+            }
+        }
     }
 
 }
