@@ -102,13 +102,13 @@
     <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
     <loggers>
         <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
-        <Logger name="com" level="INFO"/>
-        <Root level="INFO">
+        <Logger name="com" level="all"/>
+        <Root level="info">
             <appender-ref ref="Console"/>
             <appender-ref ref="RollingFileInfo"/>
             <appender-ref ref="RollingFileWarn"/>
             <appender-ref ref="RollingFileError"/>
-            <!--<appender-ref ref="RollingFileDebug"/>-->
+            <appender-ref ref="RollingFileDebug"/>
         </Root>
     </loggers>
 

@@ -1,10 +1,13 @@
 package com.entity;
 
+import lombok.Getter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+@Getter
 public class GameOutput {
 
     private ByteArrayOutputStream byteArrayOutputStream;
@@ -145,14 +148,6 @@ public class GameOutput {
             }
         }
         return this;
-    }
-
-    public ByteArrayOutputStream getOutputStream() {
-        return byteArrayOutputStream;
-    }
-
-    public DataOutputStream getAmf3Output() {
-        return outputStream;
     }
 
 }

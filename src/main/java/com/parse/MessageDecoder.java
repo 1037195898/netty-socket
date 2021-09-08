@@ -1,16 +1,16 @@
 package com.parse;
 
-import com.decoder.AES;
 import com.entity.GameInput;
 import com.socket.ActionData;
+import com.util.IOUtils;
 import com.util.ZlibUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.util.AttributeKey;
 
+@ChannelHandler.Sharable
 public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 
     /**
@@ -48,7 +48,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
         // 解压
         byte[] by = ZlibUtil.decompress(bytes);
         // 解密
-        by = getAes(ctx.channel()).decrypt(by);
+        by = IOUtils.getAes(ctx.channel()).decrypt(by);
         GameInput input = new GameInput(by);
         ActionData<?> data = new ActionData<>(0);
 //        System.out.println("事件头="+data.getAction());
@@ -63,24 +63,6 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 //        System.out.println("获取所有数据后的长度,"+input.available()+", "+buf.remaining());
 //        System.out.println(data.getData());
         return data;
-    }
-
-    /**
-     * 获取对象保存的 aes
-     *
-     * @param channel 渠道
-     * @return AES
-     */
-    protected AES getAes(Channel channel) {
-        AttributeKey<AES> attributeKey = AttributeKey.valueOf("key_" + channel.id());
-        AES aes;
-        if (!channel.hasAttr(attributeKey)) {
-            aes = new AES();
-            channel.attr(attributeKey).set(aes);
-        } else {
-            aes = channel.attr(attributeKey).get();
-        }
-        return aes;
     }
 
 }

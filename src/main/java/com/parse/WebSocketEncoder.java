@@ -4,17 +4,20 @@ import com.entity.GameOutput;
 import com.socket.ActionData;
 import com.util.IOUtils;
 import com.util.ZlibUtil;
-import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @ChannelHandler.Sharable
-public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
+public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ActionData msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, ActionData<?> msg, List<Object> out) throws Exception {
         GameOutput gameOutput = new GameOutput();
         try {
             gameOutput.writeLong(System.currentTimeMillis());// 发送当前服务器的时间
@@ -31,16 +34,13 @@ public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
             bytes = str.getBytes();
             // 压缩
             bytes = ZlibUtil.compress(bytes);
-            out.writeInt(bytes.length);
-            out.writeBytes(bytes);
+            LoggerFactory.getLogger(getClass()).debug("发送数据：" + bytes.length);
+            out.add(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
+//            TextWebSocketFrame
+//            BinaryWebSocketFrame
         } finally {
             gameOutput.close();
         }
-    }
-
-    @Override
-    public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
-        super.close(ctx, promise);
     }
 
 }

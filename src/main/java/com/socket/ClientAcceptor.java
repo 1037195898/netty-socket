@@ -1,15 +1,15 @@
 package com.socket;
 
+import com.adapter.ActionChannelAdapter;
+import com.initializer.ByteChannelHandler;
+import com.util.ActionUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 
 public class ClientAcceptor {
 
@@ -25,32 +25,20 @@ public class ClientAcceptor {
     public ClientAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
         init();
         actionChannelAdapter = new ActionChannelAdapter();
-        actionChannelAdapter.addSessionListener(sessionListener);
+        ActionUtils.getInst().addSessionListener(sessionListener);
         //添加handler，管道中的处理器，通过ChannelInitializer来构造
         if (channelHandler == null) channelHandler = new ByteChannelHandler(actionChannelAdapter);
         bootstrap.handler(channelHandler);
-
-
     }
 
     public void connect(String host, int port) {
         //建立连接
-        channelFuture = bootstrap.connect(host,port);
-//        try {
-//            //测试输入
-//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-//            while(true){
-//                System.out.println("请输入：");
-//                String msg = bufferedReader.readLine();
-//                ActionData<?> action = new ActionData<>(100);
-//                action.setBuf(msg.getBytes(StandardCharsets.UTF_8));
-//                channelFuture.channel().writeAndFlush(action);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }finally {
-//
-//        }
+        channelFuture = bootstrap.connect(host, port);
+    }
+
+    public void connect(URI uri) throws InterruptedException {
+        //建立连接
+        channelFuture = bootstrap.connect(uri.getHost(), uri.getPort());
     }
 
     public void writeAndFlush(Object msg) {

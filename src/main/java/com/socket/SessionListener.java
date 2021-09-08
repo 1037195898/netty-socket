@@ -10,14 +10,14 @@ public interface SessionListener {
 	 * @param session
 	 * @throws Exception
 	 */
-	void sessionCreated(ChannelHandlerContext session) throws Exception;
+	void sessionCreated(ChannelHandlerContext session);
 	
 	/**
 	 * 当连接被关闭的时候，此方法被调用。
 	 * @param session
 	 * @throws Exception
 	 */
-	void sessionClosed(ChannelHandlerContext session) throws Exception;
+	void sessionClosed(ChannelHandlerContext session);
 	
 	/**
 	 * 调用任何异常是由用户执行或由 MINA IoHandler 抛出。如果原因是IOException实例，MINA会自动关闭连接。
@@ -25,7 +25,7 @@ public interface SessionListener {
 	 * @param cause
 	 * @throws Exception
 	 */
-	void exceptionCaught(ChannelHandlerContext session, Throwable cause) throws Exception;
+	void exceptionCaught(ChannelHandlerContext session, Throwable cause);
 
 	/**
 	 * 当连接变成闲置状态的时候，此方法被调用。
@@ -40,7 +40,7 @@ public interface SessionListener {
 	 * @param message
 	 * @throws Exception
 	 */
-	void messageSent(ChannelHandlerContext session, Object message) throws Exception;
+	void messageSent(ChannelHandlerContext session, Object message);
 
 	/**
 	 * 当接收到新的消息的时候，此方法被调用。
@@ -55,7 +55,7 @@ public interface SessionListener {
 	 * @param message
 	 * @throws Exception
 	 */
-	void notRegAction(ChannelHandlerContext session, Object message) throws Exception;
+	void notRegAction(ChannelHandlerContext session, Object message);
 
 
 

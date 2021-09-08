@@ -1,9 +1,12 @@
 package com.entity;
 
+import lombok.Getter;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+@Getter
 public class GameInput {
 
     private DataInputStream inputStream;
@@ -62,14 +65,6 @@ public class GameInput {
 
     public int read(byte b[], int off, int len) throws IOException {
         return inputStream.read(b, off, len);
-    }
-
-    public DataInputStream getAmf3Input() {
-        return inputStream;
-    }
-
-    public ByteArrayInputStream getInputStream() {
-        return byteArrayInputStream;
     }
 
 }
