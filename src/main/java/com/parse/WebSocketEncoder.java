@@ -16,6 +16,18 @@ import java.util.List;
 @ChannelHandler.Sharable
 public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
 
+    private static WebSocketEncoder encoder;
+    public static WebSocketEncoder getInst() {
+        if (encoder == null) {
+            synchronized (WebSocketEncoder.class) {
+                if (encoder == null) {
+                    encoder = new WebSocketEncoder();
+                }
+            }
+        }
+        return encoder;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, ActionData<?> msg, List<Object> out) throws Exception {
         GameOutput gameOutput = new GameOutput();

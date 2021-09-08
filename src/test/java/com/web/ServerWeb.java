@@ -25,10 +25,7 @@ public class ServerWeb implements SessionListener {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         LoggerFactory.getLogger(getClass()).info("开始");
         ServerAcceptor serverAcceptor = new ServerAcceptor(this,
-                new WebSocketChannelInitializer(
-                        new WebSocketDecoder()
-                        , new WebSocketEncoder()
-                        , new MessageAdapter()
+                new WebSocketChannelInitializer(new MessageAdapter()
                         , new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
                 ));
         serverAcceptor.registerAction(new WebHandler(), 100);
@@ -54,7 +51,7 @@ public class ServerWeb implements SessionListener {
     public void exceptionCaught(ChannelHandlerContext session, Throwable cause) {
         session.channel().closeFuture();
         System.out.println("意外断开一个"+session.channel().id().asLongText());
-        cause.printStackTrace();
+//        cause.printStackTrace();
     }
 
     @Override

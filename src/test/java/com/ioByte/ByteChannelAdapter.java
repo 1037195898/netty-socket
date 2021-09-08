@@ -1,19 +1,16 @@
 package com.ioByte;
 
-import com.adapter.MessageAdapter;
 import com.socket.ActionData;
-import io.netty.channel.ChannelHandler;
+import com.socket.ActionHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-@ChannelHandler.Sharable
-public class ByteChannelAdapter extends MessageAdapter {
+public class ByteChannelAdapter implements ActionHandler<Object> {
+
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ActionData<?> msg) throws Exception {
-        super.channelRead0(ctx, msg);
-
-
-
+    public void execute(ActionData<Object> actionData, ChannelHandlerContext session) {
+        System.out.println(actionData.getAction());
+        System.out.println(new String(actionData.getBuf()));
     }
 
 }

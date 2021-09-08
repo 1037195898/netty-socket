@@ -15,10 +15,6 @@ public class ClientAcceptor {
     private NioEventLoopGroup worker;
     private ChannelFuture channelFuture;
 
-    public ClientAcceptor(SessionListener sessionListener) {
-        this(sessionListener, null);
-    }
-
     public ClientAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
         init();
         ActionUtils.getInst().addSessionListener(sessionListener);

@@ -13,6 +13,18 @@ import io.netty.handler.codec.MessageToByteEncoder;
 @ChannelHandler.Sharable
 public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
 
+    private static MessageEncoder encoder;
+    public static MessageEncoder getInst() {
+        if (encoder == null) {
+            synchronized (MessageEncoder.class) {
+                if (encoder == null) {
+                    encoder = new MessageEncoder();
+                }
+            }
+        }
+        return encoder;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, ActionData msg, ByteBuf out) throws Exception {
         GameOutput gameOutput = new GameOutput();

@@ -21,12 +21,7 @@ public class ClientWeb implements SessionListener {
     public ClientWeb() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         URI uri = URI.create("ws://localhost:9099/ws");
-        ClientAcceptor clientAcceptor = new ClientAcceptor(this,
-                new WebSocketChannelInitializer(uri,
-    //                new TestMessageEncoder(),
-                    new WebSocketDecoder(),
-                    new WebSocketEncoder()
-        ));
+        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri));
         clientAcceptor.registerAction(new WebHandler(), 100);
         try {
             clientAcceptor.connect(uri);

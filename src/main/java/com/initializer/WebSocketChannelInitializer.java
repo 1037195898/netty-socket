@@ -1,5 +1,9 @@
 package com.initializer;
 
+import com.parse.MessageDecoder;
+import com.parse.MessageEncoder;
+import com.parse.WebSocketDecoder;
+import com.parse.WebSocketEncoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -55,6 +59,10 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
                     WebSocketClientHandshakerFactory.newHandshaker(clientUri, WebSocketVersion.V13,
                     null, false, new DefaultHttpHeaders(), Integer.MAX_VALUE)));
         }
+
+        pipeline.addLast(WebSocketDecoder.getInst());// 使用单例 节约创建类
+        pipeline.addLast(WebSocketEncoder.getInst());// 使用单例 节约创建类
+
         // 添加自定义的Handler
         for (int i = 0; i < channelHandler.length; i++) {
             ChannelHandler handler = channelHandler[i];

@@ -16,10 +16,6 @@ public class ServerAcceptor {
     EventLoopGroup boss;
     EventLoopGroup worker;
 
-    public ServerAcceptor(SessionListener sessionListener) {
-        this(sessionListener, null);
-    }
-
     public ServerAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
         init();
         ActionUtils.getInst().addSessionListener(sessionListener);

@@ -20,6 +20,18 @@ import java.nio.charset.StandardCharsets;
 @ChannelHandler.Sharable
 public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
+    private static WebSocketDecoder encoder;
+    public static WebSocketDecoder getInst() {
+        if (encoder == null) {
+            synchronized (WebSocketDecoder.class) {
+                if (encoder == null) {
+                    encoder = new WebSocketDecoder();
+                }
+            }
+        }
+        return encoder;
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         LoggerFactory.getLogger(getClass()).debug("WebSocketDecoder.channelRead : " + msg);
