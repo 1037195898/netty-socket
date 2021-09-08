@@ -1,6 +1,6 @@
 package com.web;
 
-import com.adapter.BaseChannelAdapter;
+import com.adapter.MessageAdapter;
 import com.entity.GameInput;
 import com.socket.ActionData;
 import io.netty.channel.ChannelHandler;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.charset.Charset;
 
 @ChannelHandler.Sharable
-public class WebChannelAdapter extends BaseChannelAdapter<ActionData<?>> {
+public class WebChannelAdapter extends MessageAdapter {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ActionData<?> msg) throws Exception {

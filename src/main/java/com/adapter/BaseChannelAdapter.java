@@ -8,13 +8,9 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
-
-    protected Map<String, Long> sessionVerify = new HashMap<>();
 
     /**
      * 新的客户端连接事件
@@ -25,7 +21,6 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         super.handlerAdded(ctx);
         LoggerFactory.getLogger(getClass()).debug("新建连接");
-        sessionVerify.put(ctx.channel().id().asLongText(), (long) 0);
         ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionCreated(ctx));
     }
 
@@ -39,7 +34,6 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
         super.handlerRemoved(ctx);
         LoggerFactory.getLogger(getClass()).debug("断开连接");
         ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
-        sessionVerify.remove(ctx.channel().id().asLongText());
         ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionClosed(ctx));
     }
 
@@ -87,27 +81,6 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
     protected void channelRead0(ChannelHandlerContext ctx, T msg) throws Exception {
         ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.messageReceived(ctx, msg));
         ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
-    }
-
-    /**
-     * 异常发生事件
-     * @param ctx
-     * @param cause
-     * @throws Exception
-     */
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        logger.error("client caught exception", cause);
-        if (cause instanceof IOException) {
-            ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
-            sessionVerify.remove(ctx.channel().id().asLongText());
-        }
-        ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(ctx, cause));
-        ctx.close();
-    }
-
-    public Map<String, Long> getSessionVerify() {
-        return sessionVerify;
     }
 
 }

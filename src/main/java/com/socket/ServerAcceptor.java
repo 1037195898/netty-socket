@@ -1,7 +1,5 @@
 package com.socket;
 
-import com.adapter.ActionChannelAdapter;
-import com.initializer.ByteChannelHandler;
 import com.util.ActionUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -10,10 +8,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 public class ServerAcceptor {
 
@@ -29,11 +24,6 @@ public class ServerAcceptor {
         init();
         ActionUtils.getInst().addSessionListener(sessionListener);
         //添加handler，管道中的处理器，通过ChannelInitializer来构造
-        if (channelHandler == null) {
-            channelHandler = new ByteChannelHandler(
-                    new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
-                    new ActionChannelAdapter());
-        }
         serverBootstrap.childHandler(channelHandler);
         //设置参数，TCP参数
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 2048);   //连接缓冲池的大小

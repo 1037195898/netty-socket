@@ -1,19 +1,26 @@
 package com.ioByte;
 
+import com.initializer.ByteChannelHandler;
 import com.socket.ActionData;
 import com.socket.ActionHandler;
 import com.socket.ServerAcceptor;
 import com.socket.SessionListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class Server implements SessionListener {
 
     public Server() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         LoggerFactory.getLogger(getClass()).info("开始");
-        ServerAcceptor serverAcceptor = new ServerAcceptor(this);
+        ServerAcceptor serverAcceptor = new ServerAcceptor(this,
+                new ByteChannelHandler(
+                        new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
+                        new ByteChannelAdapter()));
         serverAcceptor.registerAction(new TestHandler(), 100);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");
