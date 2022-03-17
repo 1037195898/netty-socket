@@ -75,7 +75,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
     }
 
     private void initIdle(ChannelPipeline pipeline, IdleStateHandler handler) {
-        pipeline.addLast(new IdleStateHandler(
+        pipeline.addFirst(new IdleStateHandler(
                 handler.getReaderIdleTimeInMillis(),
                 handler.getWriterIdleTimeInMillis(),
                 handler.getAllIdleTimeInMillis(),

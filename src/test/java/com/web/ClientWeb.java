@@ -55,7 +55,8 @@ public class ClientWeb implements SessionListener {
 
     @Override
     public void sessionClosed(ChannelHandlerContext session) {
-
+        System.out.println("断开了");
+        System.exit(0);
     }
 
     @Override

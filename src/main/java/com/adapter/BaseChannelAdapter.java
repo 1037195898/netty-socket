@@ -6,8 +6,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.Map;
 
 public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
@@ -45,7 +47,8 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        super.userEventTriggered(ctx, evt);
+//        super.userEventTriggered(ctx, evt);
+//        System.out.println(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss") + ", userEventTriggered|" + evt);
         if (evt instanceof IdleStateEvent) { // 空闲状态
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.ALL_IDLE) {
@@ -69,7 +72,8 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                 ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
             }
         }
-//        System.out.println("userEventTriggered|" + evt);
+        // 执行父类的方法
+        ctx.fireUserEventTriggered(evt);
     }
 
     @Override

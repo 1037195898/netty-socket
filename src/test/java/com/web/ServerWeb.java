@@ -39,7 +39,7 @@ public class ServerWeb implements SessionListener {
 
     @Override
     public void sessionCreated(ChannelHandlerContext session) {
-        System.out.println("连接一个=" + session.channel().id().asLongText());
+        System.out.println("连接一个=" + session.channel().id() + " ," + session.channel().id().asLongText());
     }
 
     @Override
