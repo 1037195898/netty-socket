@@ -29,7 +29,15 @@ public class ClientAcceptor {
 
     public void connect(URI uri) throws InterruptedException {
         //建立连接
-        channelFuture = bootstrap.connect(uri.getHost(), uri.getPort());
+        int port = uri.getPort();
+        if (port == -1) {
+            if (uri.getScheme().equals("wss")) {
+                port = 443;
+            } else {
+                port = 80;
+            }
+        }
+        connect(uri.getHost(), port);
     }
 
     public void writeAndFlush(Object msg) {
