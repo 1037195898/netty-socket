@@ -4,6 +4,7 @@ import com.socket.ActionData;
 import com.util.ActionUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -70,6 +71,10 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                     ctx.writeAndFlush(new ActionData<>(1));
                 }
                 ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
+            }
+        } else if (evt instanceof WebSocketClientProtocolHandler.ClientHandshakeStateEvent) {
+            if (evt == WebSocketClientProtocolHandler.ClientHandshakeStateEvent.HANDSHAKE_COMPLETE) {
+                ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
             }
         }
         // 执行父类的方法
