@@ -57,6 +57,11 @@ public interface SessionListener {
 	 */
 	void notRegAction(ChannelHandlerContext session, Object message);
 
-
+	/**
+	 * websocket 握手成功
+	 * @param session
+	 * @throws Exception
+	 */
+	void handshakeComplete(ChannelHandlerContext session);
 
 }
