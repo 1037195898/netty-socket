@@ -80,7 +80,19 @@ public class GameOutput {
         return this;
     }
 
+    public GameOutput writeInt(Integer v) throws IOException {
+        if (v == null) { v = 0;}
+        outputStream.writeInt(v);
+        return this;
+    }
+
     public GameOutput writeShort(int v) throws IOException {
+        outputStream.writeShort(v);
+        return this;
+    }
+
+    public GameOutput writeShort(Integer v) throws IOException {
+        if (v == null) { v = 0;}
         outputStream.writeShort(v);
         return this;
     }
@@ -89,13 +101,29 @@ public class GameOutput {
         outputStream.writeFloat(v);
         return this;
     }
+    public GameOutput writeFloat(Float v) throws IOException {
+        if (v == null) { v = 0f;}
+        outputStream.writeFloat(v);
+        return this;
+    }
 
     public GameOutput writeDouble(double v) throws IOException {
         outputStream.writeDouble(v);
         return this;
     }
+    public GameOutput writeDouble(Double v) throws IOException {
+        if (v == null) { v = 0d;}
+        outputStream.writeDouble(v);
+        return this;
+    }
 
     public GameOutput writeLong(long v) throws IOException {
+        outputStream.writeLong(v);
+        return this;
+    }
+
+    public GameOutput writeLong(Long v) throws IOException {
+        if (v == null) { v = 0L;}
         outputStream.writeLong(v);
         return this;
     }
@@ -106,6 +134,12 @@ public class GameOutput {
     }
 
     public GameOutput writeBoolean(boolean v) throws IOException {
+        outputStream.writeBoolean(v);
+        return this;
+    }
+
+    public GameOutput writeBoolean(Boolean v) throws IOException {
+        if (v == null) { v = false;}
         outputStream.writeBoolean(v);
         return this;
     }
