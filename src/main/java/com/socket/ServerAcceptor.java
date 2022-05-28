@@ -41,10 +41,25 @@ public class ServerAcceptor {
 
     /**
      * 绑定一个端口
-     *
      * @param port 端口
      */
     public void bind(int port) {
+        //绑定ip和port
+        try {
+            serverBootstrap.bind("0.0.0.0", port).sync();//Future模式的channel对象
+            LoggerFactory.getLogger(getClass()).info("服务器启动成功!");
+        } catch (InterruptedException e) {
+            LoggerFactory.getLogger(getClass()).error("server start got exception!", e);
+        } finally {
+            stop();
+        }
+    }
+
+    /**
+     * 绑定一个端口 会调用channelFuture.channel().closeFuture().sync()  阻止主线程关闭
+     * @param port 端口
+     */
+    public void bindSync(int port) {
         //绑定ip和port
         try {
             ChannelFuture channelFuture = serverBootstrap.bind("0.0.0.0", port).sync();//Future模式的channel对象
