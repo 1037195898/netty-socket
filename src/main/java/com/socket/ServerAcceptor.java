@@ -42,17 +42,18 @@ public class ServerAcceptor {
     /**
      * 绑定一个端口
      * @param port 端口
+     * @return
      */
-    public void bind(int port) {
-        //绑定ip和port
+    public ChannelFuture bind(int port) {
         try {
-            serverBootstrap.bind("0.0.0.0", port).sync();//Future模式的channel对象
+            //绑定ip和port
+            ChannelFuture channelFuture = serverBootstrap.bind("0.0.0.0", port).sync();//Future模式的channel对象
             LoggerFactory.getLogger(getClass()).info("服务器启动成功!");
+            return channelFuture;
         } catch (InterruptedException e) {
             LoggerFactory.getLogger(getClass()).error("server start got exception!", e);
-        } finally {
-            stop();
         }
+        return null;
     }
 
     /**
@@ -60,16 +61,12 @@ public class ServerAcceptor {
      * @param port 端口
      */
     public void bindSync(int port) {
-        //绑定ip和port
         try {
-            ChannelFuture channelFuture = serverBootstrap.bind("0.0.0.0", port).sync();//Future模式的channel对象
-            LoggerFactory.getLogger(getClass()).info("服务器启动成功!");
+            ChannelFuture channelFuture = bind(port);//Future模式的channel对象
             //监听关闭
             channelFuture.channel().closeFuture().sync();  //等待服务关闭，关闭后应该释放资源
         } catch (InterruptedException e) {
             LoggerFactory.getLogger(getClass()).error("server start got exception!", e);
-        } finally {
-            stop();
         }
     }
 
