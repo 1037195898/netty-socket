@@ -3,6 +3,8 @@ package com.parse;
 import com.entity.GameInput;
 import com.socket.ActionData;
 import com.util.IOUtils;
+import com.util.SocketType;
+import com.util.SocketUtils;
 import com.util.ZlibUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -17,10 +19,18 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * 解析收到的数据
+ */
 @ChannelHandler.Sharable
 public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
-    private static WebSocketDecoder encoder;
+    /**
+     * 是否加密
+     */
+    private boolean isEncrypt;
+    private static volatile WebSocketDecoder encoder;
+
     public static WebSocketDecoder getInst() {
         if (encoder == null) {
             synchronized (WebSocketDecoder.class) {
@@ -32,6 +42,18 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
         return encoder;
     }
 
+    public static WebSocketDecoder getInst(boolean isEncrypt) {
+        if (encoder == null) {
+            synchronized (WebSocketDecoder.class) {
+                if (encoder == null) {
+                    encoder = new WebSocketDecoder();
+                }
+            }
+        }
+        encoder.isEncrypt = isEncrypt;
+        return encoder;
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         LoggerFactory.getLogger(getClass()).debug("WebSocketDecoder.channelRead : " + msg);
@@ -39,33 +61,45 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
     }
 
     private void channelReadT(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf byteBuf = null;
         if (msg instanceof TextWebSocketFrame) {
-            String content = ((TextWebSocketFrame) msg).text();
-            ActionData<?> data = new ActionData<>(-100);
-            data.setBuf(content.getBytes(StandardCharsets.UTF_8));
-            ctx.fireChannelRead(data);
-        } if (msg instanceof BinaryWebSocketFrame) {
-            ByteBuf byteBuf = Unpooled.copiedBuffer( ((BinaryWebSocketFrame) msg).content() );
-            byte[] bytes = ByteBufUtil.getBytes(byteBuf);
+            byteBuf = ((TextWebSocketFrame) msg).content();
+//            String content = ((TextWebSocketFrame) msg).text();
+//            ActionData<?> data = new ActionData<>(-100);
+//            data.setBuf(content.getBytes(StandardCharsets.UTF_8));
+//            ctx.fireChannelRead(data);
+        } else if (msg instanceof BinaryWebSocketFrame) {
+            byteBuf = Unpooled.copiedBuffer(((BinaryWebSocketFrame) msg).content());
+        }
+        if (byteBuf == null) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
+        byte[] bytes = ByteBufUtil.getBytes(byteBuf);
+        if (isEncrypt) {
             // 解压
-            byte[] by = ZlibUtil.decompress(bytes);
+            bytes = ZlibUtil.decompress(bytes);
             // 解密
-            by = IOUtils.getAes(ctx.channel()).decrypt(by);
-            GameInput input = new GameInput(by);
-            ActionData<?> data = new ActionData<>(0);
+            bytes = IOUtils.getAes(ctx.channel()).decrypt(bytes);
+        }
+        ActionData<?> data = new ActionData<>(0);
 //        System.out.println("事件头="+data.getAction());
 //        System.out.println("获取了事件头后剩余的="+input.available());
 //        System.out.println("获取包头后的长度,"+input.available()+", "+buf.remaining());
+        if (SocketUtils.webSocketType == SocketType.TEXT_WEB_SOCKET_FRAME) {
+            data.setBuf(bytes);
+        } else {
+            GameInput input = new GameInput(bytes);
             data.setVerify(input.readLong());
             data.setAction(input.readInt());
             int byteLen = input.readInt();// 获取长度
             bytes = new byte[byteLen];
             input.read(bytes, 0, byteLen);
             data.setBuf(bytes);
+        }
 //        System.out.println("获取所有数据后的长度,"+input.available()+", "+buf.remaining());
 //        System.out.println(data.getData());
-            ctx.fireChannelRead(data);
-        }
+        ctx.fireChannelRead(data);
         ReferenceCountUtil.release(msg);
     }
 

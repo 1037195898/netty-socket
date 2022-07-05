@@ -28,7 +28,7 @@ public class ClientAcceptor {
         return channelFuture;
     }
 
-    public ChannelFuture connect(URI uri) throws InterruptedException {
+    public ChannelFuture connect(URI uri) {
         //建立连接
         int port = uri.getPort();
         if (port == -1) {

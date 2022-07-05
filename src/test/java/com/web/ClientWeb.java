@@ -8,6 +8,8 @@ import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.SessionListener;
+import com.util.SocketType;
+import com.util.SocketUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -24,6 +26,8 @@ public class ClientWeb implements SessionListener {
     public ClientWeb() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         URI uri = URI.create("ws://localhost:9099/ws");
+
+        SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
         ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri,
                 new MessageAdapter(),
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)

@@ -1,7 +1,5 @@
 package com.initializer;
 
-import com.parse.MessageDecoder;
-import com.parse.MessageEncoder;
 import com.parse.WebSocketDecoder;
 import com.parse.WebSocketEncoder;
 import io.netty.channel.Channel;
@@ -24,14 +22,38 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
 
     /** 是否是服务器 */
     private final URI clientUri;
+    private IPipeline iPipeline;
     private ChannelHandler[] channelHandler;
+    /** 是否加密 */
+    private boolean isEncrypt;
 
     public WebSocketChannelInitializer(ChannelHandler... channelHandler) {
         this(null, channelHandler);
     }
 
+    /**
+     * 默认不加密
+     * @param clientUri
+     * @param channelHandler
+     */
     public WebSocketChannelInitializer(URI clientUri, ChannelHandler... channelHandler) {
+        this(clientUri,false, channelHandler);
+    }
+
+    /**
+     *
+     * @param clientUri 客户端使用的url
+     * @param isEncrypt 是否加密
+     * @param channelHandler
+     */
+    public WebSocketChannelInitializer(URI clientUri, boolean isEncrypt, ChannelHandler... channelHandler) {
+        this(clientUri, isEncrypt, null, channelHandler);
+    }
+
+    public WebSocketChannelInitializer(URI clientUri, boolean isEncrypt, IPipeline pipeline, ChannelHandler... channelHandler) {
         this.clientUri = clientUri;
+        this.isEncrypt = isEncrypt;
+        this.iPipeline = pipeline;
         this.channelHandler = channelHandler;
     }
 
@@ -60,8 +82,8 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
                     null, false, new DefaultHttpHeaders(), Integer.MAX_VALUE)));
         }
 
-        pipeline.addLast(WebSocketDecoder.getInst());// 使用单例 节约创建类
-        pipeline.addLast(WebSocketEncoder.getInst());// 使用单例 节约创建类
+        pipeline.addLast(WebSocketDecoder.getInst(isEncrypt));// 使用单例 节约创建类
+        pipeline.addLast(WebSocketEncoder.getInst(isEncrypt));// 使用单例 节约创建类
 
         // 添加自定义的Handler
         for (int i = 0; i < channelHandler.length; i++) {
@@ -72,6 +94,11 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
                 pipeline.addLast("handler" + i, handler);
             }
         }
+
+        if (iPipeline != null) {
+            iPipeline.run(pipeline);
+        }
+
     }
 
     private void initIdle(ChannelPipeline pipeline, IdleStateHandler handler) {
@@ -83,4 +110,13 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
         ));
     }
 
+    public interface IPipeline {
+
+        /** 自动处理pipeline */
+        void run(ChannelPipeline pipeline);
+
+    }
+
 }
+
+
