@@ -8,10 +8,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.Map;
 
 public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
