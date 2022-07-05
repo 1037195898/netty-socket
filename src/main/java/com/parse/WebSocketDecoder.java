@@ -87,6 +87,7 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 //        System.out.println("获取了事件头后剩余的="+input.available());
 //        System.out.println("获取包头后的长度,"+input.available()+", "+buf.remaining());
         if (SocketUtils.webSocketType == SocketType.TEXT_WEB_SOCKET_FRAME) {
+            data.setVerify(System.currentTimeMillis());
             data.setBuf(bytes);
         } else {
             GameInput input = new GameInput(bytes);
