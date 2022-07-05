@@ -71,8 +71,8 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                     iosIdle.put(id, 1);
                     ctx.writeAndFlush(new ActionData<>(1));
                 }
-                ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
             }
+            ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
         } else if (evt instanceof WebSocketClientProtocolHandler.ClientHandshakeStateEvent) {
             if (evt == WebSocketClientProtocolHandler.ClientHandshakeStateEvent.HANDSHAKE_COMPLETE) {
                 ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
