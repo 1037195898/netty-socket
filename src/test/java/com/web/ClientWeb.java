@@ -1,5 +1,6 @@
 package com.web;
 
+import com.adapter.MessageAdapter;
 import com.entity.GameOutput;
 import com.initializer.WebSocketChannelInitializer;
 import com.parse.WebSocketDecoder;
@@ -9,19 +10,24 @@ import com.socket.ClientAcceptor;
 import com.socket.SessionListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class ClientWeb implements SessionListener {
 
     public ClientWeb() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         URI uri = URI.create("ws://localhost:9099/ws");
-        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri));
+        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri,
+                new MessageAdapter(),
+                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
+        ));
         clientAcceptor.registerAction(new WebHandler(), 100);
         try {
             clientAcceptor.connect(uri);
