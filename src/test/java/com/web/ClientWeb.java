@@ -91,5 +91,10 @@ public class ClientWeb implements SessionListener {
         }
     }
 
+    @Override
+    public void handshakeComplete(ChannelHandlerContext session) {
+
+    }
+
 }
 

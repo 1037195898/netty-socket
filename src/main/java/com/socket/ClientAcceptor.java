@@ -22,12 +22,13 @@ public class ClientAcceptor {
         bootstrap.handler(channelHandler);
     }
 
-    public void connect(String host, int port) {
+    public ChannelFuture connect(String host, int port) {
         //建立连接
         channelFuture = bootstrap.connect(host, port);
+        return channelFuture;
     }
 
-    public void connect(URI uri) throws InterruptedException {
+    public ChannelFuture connect(URI uri) throws InterruptedException {
         //建立连接
         int port = uri.getPort();
         if (port == -1) {
@@ -37,7 +38,7 @@ public class ClientAcceptor {
                 port = 80;
             }
         }
-        connect(uri.getHost(), port);
+        return connect(uri.getHost(), port);
     }
 
     public void writeAndFlush(Object msg) {
@@ -91,6 +92,10 @@ public class ClientAcceptor {
      */
     public ActionHandler<?> getAction(int action) {
         return ActionUtils.getInst().getAction(action);
+    }
+
+    public ChannelFuture getChannelFuture() {
+        return channelFuture;
     }
 
 }
