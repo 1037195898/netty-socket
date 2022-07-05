@@ -79,4 +79,9 @@ public class Server implements SessionListener {
         }
     }
 
+    @Override
+    public void handshakeComplete(ChannelHandlerContext session) {
+
+    }
+
 }

@@ -82,4 +82,9 @@ public class Client implements SessionListener {
 
     }
 
+    @Override
+    public void handshakeComplete(ChannelHandlerContext session) {
+
+    }
+
 }
