@@ -61,21 +61,17 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
     }
 
     private void channelReadT(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf byteBuf = null;
+        byte[] bytes = null;
         if (msg instanceof TextWebSocketFrame) {
-            byteBuf = ((TextWebSocketFrame) msg).content();
-//            String content = ((TextWebSocketFrame) msg).text();
-//            ActionData<?> data = new ActionData<>(-100);
-//            data.setBuf(content.getBytes(StandardCharsets.UTF_8));
-//            ctx.fireChannelRead(data);
+            bytes = ((TextWebSocketFrame) msg).text().getBytes(StandardCharsets.UTF_8);
         } else if (msg instanceof BinaryWebSocketFrame) {
-            byteBuf = Unpooled.copiedBuffer(((BinaryWebSocketFrame) msg).content());
+            ByteBuf byteBuf = Unpooled.copiedBuffer(((BinaryWebSocketFrame) msg).content());
+            bytes = ByteBufUtil.getBytes(byteBuf);
         }
-        if (byteBuf == null) {
+        if (bytes == null) {
             ctx.fireChannelRead(msg);
             return;
         }
-        byte[] bytes = ByteBufUtil.getBytes(byteBuf);
         if (isEncrypt) {
             // 解压
             bytes = ZlibUtil.decompress(bytes);
