@@ -2,6 +2,7 @@ package com.socket;
 
 import com.util.ActionUtils;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
@@ -43,14 +44,37 @@ public class ClientAcceptor {
         return connect(uri.getHost(), port);
     }
 
+    /**
+     * 发送消息并获得成功监听
+     *
+     * @param msg
+     * @return
+     */
     public ChannelFuture writeAndFlush(Object msg) {
-        ChannelFuture future = channelFuture.channel().writeAndFlush(msg);
+        ChannelFuture future = writeFlush(msg);
         future.addListener((ChannelFutureListener) future1 -> {
             ActionUtils.getInst().getListeners()
                     .forEach(sessionListener ->
                             sessionListener.messageSent(msg));
         });
         return future;
+    }
+
+    /**
+     * 直接发送消息不监听成功与否
+     * @param msg
+     * @return
+     */
+    public ChannelFuture writeFlush(Object msg) {
+        return channelFuture.channel().writeAndFlush(msg);
+    }
+
+    public ChannelFuture write(Object msg) {
+        return channelFuture.channel().write(msg);
+    }
+
+    public Channel flush() {
+        return channelFuture.channel().flush();
     }
 
     public Future<?> stop() {
