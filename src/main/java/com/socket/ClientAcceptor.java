@@ -52,11 +52,13 @@ public class ClientAcceptor {
      */
     public ChannelFuture writeAndFlush(Object msg) {
         ChannelFuture future = writeFlush(msg);
-        future.addListener((ChannelFutureListener) future1 -> {
-            ActionUtils.getInst().getListeners()
-                    .forEach(sessionListener ->
-                            sessionListener.messageSent(msg));
-        });
+        if (future.isSuccess()) {
+            future.addListener((ChannelFutureListener) future1 -> {
+                ActionUtils.getInst().getListeners()
+                        .forEach(sessionListener ->
+                                sessionListener.messageSent(msg));
+            });
+        }
         return future;
     }
 
