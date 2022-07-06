@@ -3,7 +3,7 @@ package com.socket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 
-public interface SessionListener {
+public interface SessionListener<T> {
 
 	/**
 	 * 当有新的连接建立的时候，该方法被调用。
@@ -39,14 +39,14 @@ public interface SessionListener {
 	 * @param message
 	 * @throws Exception
 	 */
-	void messageSent(Object message);
+	void messageSent(T message);
 
 	/**
 	 * 当接收到新的消息的时候，此方法被调用。
 	 * @param session
 	 * @param message
 	 */
-	void messageReceived(ChannelHandlerContext session, Object message);
+	void messageReceived(ChannelHandlerContext session, T message);
 
 	/**
 	 * 未注册的action
@@ -54,7 +54,7 @@ public interface SessionListener {
 	 * @param message
 	 * @throws Exception
 	 */
-	void notRegAction(ChannelHandlerContext session, Object message);
+	void notRegAction(ChannelHandlerContext session, T message);
 
 	/**
 	 * websocket 握手成功
