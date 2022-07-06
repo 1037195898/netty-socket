@@ -17,9 +17,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 例子：<br/>
+ * <pre>
+ *     URI uri = URI.create("wss://www.test.com/dev");
+ *     int port = uri.getPort();
+ *     if (port == -1) {
+ *        if (uri.getScheme().equals("wss")) {
+ *          port = 443;
+ *        } else {
+ *          port = 80;
+ *        }
+ *     }
+ *     SSLContext content = SSLEngineUtils.getSSLContext();
+ *     SSLEngine sslEngine = content.createSSLEngine(uri.getHost(), port);
+ *     sslEngine.setUseClientMode(true);
+ *     sslEngine.setNeedClientAuth(false);
+ *     pipeline.addFirst("ssl", new SslHandler(sslEngine));
+ * </pre>
+ */
 public class SSLEngineUtils {
 
-    /** 证书路径 可以是文件夹或者文件 证书格式 *.cer */
+    /**
+     * 证书路径 可以是文件夹或者文件 证书格式 *.cer
+     */
     public static String cerPath = "data/cer";
     public static String TLS = "TLSv1.2";
 
