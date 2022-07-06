@@ -3,14 +3,16 @@ package com.web;
 import com.adapter.MessageAdapter;
 import com.entity.GameOutput;
 import com.initializer.WebSocketChannelInitializer;
-import com.parse.WebSocketDecoder;
-import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.SessionListener;
 import com.util.SocketType;
 import com.util.SocketUtils;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +30,24 @@ public class ClientWeb implements SessionListener {
         URI uri = URI.create("ws://localhost:9099/ws");
 
         SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
-        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri,
+        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri, false,
+                (channel, pipeline) -> {
+                    try {
+                        int port = uri.getPort();
+                        if (port == -1) {
+                            if (uri.getScheme().equals("wss")) {
+                                port = 443;
+                            } else {
+                                port = 80;
+                            }
+                        }
+                        SslContext t = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+                        SslHandler c = t.newHandler(channel.alloc(), uri.getHost(), port);
+                        pipeline.addFirst(c);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                },
                 new MessageAdapter(),
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
         ));

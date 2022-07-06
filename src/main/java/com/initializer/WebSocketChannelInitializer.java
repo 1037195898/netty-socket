@@ -96,7 +96,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
         }
 
         if (iPipeline != null) {
-            iPipeline.run(pipeline);
+            iPipeline.run(channel, pipeline);
         }
 
     }
@@ -113,7 +113,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
     public interface IPipeline {
 
         /** 自动处理pipeline */
-        void run(ChannelPipeline pipeline);
+        void run(Channel channel, ChannelPipeline pipeline);
 
     }
 
