@@ -3,9 +3,11 @@ package com.socket;
 import com.util.ActionUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
 
 import java.net.URI;
 
@@ -41,13 +43,19 @@ public class ClientAcceptor {
         return connect(uri.getHost(), port);
     }
 
-    public void writeAndFlush(Object msg) {
-        channelFuture.channel().writeAndFlush(msg);
+    public ChannelFuture writeAndFlush(Object msg) {
+        ChannelFuture future = channelFuture.channel().writeAndFlush(msg);
+        future.addListener((ChannelFutureListener) future1 -> {
+            ActionUtils.getInst().getListeners()
+                    .forEach(sessionListener ->
+                            sessionListener.messageSent(msg));
+        });
+        return future;
     }
 
-    public void stop() {
+    public Future<?> stop() {
         //关闭连接
-        worker.shutdownGracefully();
+        return worker.shutdownGracefully();
     }
 
     private void init() {

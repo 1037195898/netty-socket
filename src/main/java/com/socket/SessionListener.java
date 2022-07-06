@@ -36,11 +36,10 @@ public interface SessionListener {
 
 	/**
 	 * 当消息被成功发送出去的时候，此方法被调用。
-	 * @param session
 	 * @param message
 	 * @throws Exception
 	 */
-	void messageSent(ChannelHandlerContext session, Object message);
+	void messageSent(Object message);
 
 	/**
 	 * 当接收到新的消息的时候，此方法被调用。

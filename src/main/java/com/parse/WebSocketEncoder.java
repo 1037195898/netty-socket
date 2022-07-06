@@ -22,9 +22,12 @@ import java.util.List;
 @ChannelHandler.Sharable
 public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
 
-    /** 是否加密 */
+    /**
+     * 是否加密
+     */
     private boolean isEncrypt;
     private static volatile WebSocketEncoder encoder;
+
     public static WebSocketEncoder getInst() {
         if (encoder == null) {
             synchronized (WebSocketEncoder.class) {
@@ -35,6 +38,7 @@ public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
         }
         return encoder;
     }
+
     public static WebSocketEncoder getInst(boolean isEncrypt) {
         if (encoder == null) {
             synchronized (WebSocketEncoder.class) {
@@ -49,24 +53,22 @@ public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ActionData<?> msg, List<Object> out) throws Exception {
-        GameOutput gameOutput = new GameOutput();
-        try {
-            byte[] buf = msg.getBuf();
-            if (SocketUtils.webSocketType == SocketType.TEXT_WEB_SOCKET_FRAME) {
-                if (isEncrypt) {
-                    // 加密
+        byte[] buf = msg.getBuf();
+        if (SocketUtils.webSocketType == SocketType.TEXT_WEB_SOCKET_FRAME) {
+            if (isEncrypt) {
+                // 加密
 //			        System.out.println(bytes.length);
-                    String str = IOUtils.getAes(ctx.channel()).encrypt(buf);
-                    gameOutput.reset();
-                    buf = str.getBytes();
-                    // 压缩
-                    buf = ZlibUtil.compress(buf);
-                }
-                out.add(new TextWebSocketFrame(Unpooled.wrappedBuffer(buf)));
-            } else {
+                String str = IOUtils.getAes(ctx.channel()).encrypt(buf);
+                buf = str.getBytes();
+                // 压缩
+                buf = ZlibUtil.compress(buf);
+            }
+            out.add(new TextWebSocketFrame(Unpooled.wrappedBuffer(buf)));
+        } else {
+            GameOutput gameOutput = new GameOutput();
+            try {
                 gameOutput.writeLong(System.currentTimeMillis());// 发送当前服务器的时间
                 gameOutput.writeInt(msg.getAction());
-
                 buf = buf == null ? new byte[0] : buf;
                 gameOutput.writeInt(buf.length);
                 gameOutput.write(buf, 0, buf.length);
@@ -82,9 +84,9 @@ public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
                 }
                 LoggerFactory.getLogger(getClass()).debug("压缩否=" + isEncrypt + ", 格式=" + SocketUtils.webSocketType + ",发送数据：" + bytes.length);
                 out.add(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(bytes)));
+            } finally {
+                gameOutput.close();
             }
-        } finally {
-            gameOutput.close();
         }
     }
 

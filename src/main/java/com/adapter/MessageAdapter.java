@@ -50,7 +50,9 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
      * @param cause
      * @throws Exception
      */
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+//        super.exceptionCaught(ctx, cause);
 //        logger.error("client caught exception", cause);
         if (cause instanceof IOException) {
             ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
@@ -59,6 +61,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
         ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(ctx, cause));
         ctx.close();
     }
+
 
     public Map<String, Long> getSessionVerify() {
         return sessionVerify;

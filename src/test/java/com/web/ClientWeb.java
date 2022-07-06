@@ -80,7 +80,7 @@ public class ClientWeb implements SessionListener {
     }
 
     @Override
-    public void messageSent(ChannelHandlerContext session, Object message) {
+    public void messageSent(Object message) {
 
     }
 
