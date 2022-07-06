@@ -1,6 +1,5 @@
 package com.socket;
 
-import com.util.ActionUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -9,18 +8,28 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
+import lombok.Getter;
 
 import java.net.URI;
 
+@Getter
 public class ClientAcceptor {
 
     private Bootstrap bootstrap;
     private NioEventLoopGroup worker;
     private ChannelFuture channelFuture;
 
-    public ClientAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
+    ActionEventManager actionEventManager;
+
+    public ClientAcceptor() {
         init();
-        ActionUtils.getInst().addSessionListener(sessionListener);
+    }
+
+    public void addListener(SessionListener sessionListener) {
+        actionEventManager.addSessionListener(sessionListener);
+    }
+
+    public void handler(ChannelHandler channelHandler) {
         //添加handler，管道中的处理器，通过ChannelInitializer来构造
         bootstrap.handler(channelHandler);
     }
@@ -54,7 +63,7 @@ public class ClientAcceptor {
         ChannelFuture future = writeFlush(msg);
         if (future.isSuccess()) {
             future.addListener((ChannelFutureListener) future1 -> {
-                ActionUtils.getInst().getListeners()
+                actionEventManager.getListeners()
                         .forEach(sessionListener ->
                                 sessionListener.messageSent(msg));
             });
@@ -85,6 +94,7 @@ public class ClientAcceptor {
     }
 
     private void init() {
+        actionEventManager = new ActionEventManager();
         //定义服务类
         bootstrap = new Bootstrap();
         //定义执行线程组
@@ -103,7 +113,7 @@ public class ClientAcceptor {
      */
     public void registerAction(ActionHandler<?> handler, int... actions) {
         for (int action : actions) {
-            ActionUtils.getInst().registerAction(action, handler);
+            actionEventManager.registerAction(action, handler);
         }
     }
 
@@ -114,7 +124,7 @@ public class ClientAcceptor {
      */
     public void removeAction(int... actions) {
         for (int action : actions) {
-            ActionUtils.getInst().removeAction(action);
+            actionEventManager.removeAction(action);
         }
     }
 
@@ -125,11 +135,7 @@ public class ClientAcceptor {
      * @return
      */
     public ActionHandler<?> getAction(int action) {
-        return ActionUtils.getInst().getAction(action);
-    }
-
-    public ChannelFuture getChannelFuture() {
-        return channelFuture;
+        return actionEventManager.getAction(action);
     }
 
 }

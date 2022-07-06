@@ -1,8 +1,5 @@
-package com.util;
+package com.socket;
 
-import com.socket.ActionData;
-import com.socket.ActionHandler;
-import com.socket.SessionListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
@@ -11,7 +8,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class ActionUtils {
+/**
+ * 事件管理器
+ */
+public class ActionEventManager {
 
     private Map<Integer, ActionHandler<?>> actionMapping = new ConcurrentHashMap<>();
     private Set<SessionListener> listeners = new CopyOnWriteArraySet<>();
@@ -19,19 +19,6 @@ public class ActionUtils {
      * 已经被出现闲置状态的isSession
      */
     private Map<String, Integer> iosIdle = new HashMap<>();
-
-    private static volatile ActionUtils actionUtils;
-    public static ActionUtils getInst() {
-        if (actionUtils == null) {
-            synchronized (ActionUtils.class) {
-                if (actionUtils == null) {
-                    actionUtils = new ActionUtils();
-                }
-            }
-        }
-        return actionUtils;
-    }
-
 
     public void addSessionListener(SessionListener sessionListener) {
         listeners.add(sessionListener);

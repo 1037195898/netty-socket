@@ -1,6 +1,5 @@
 package com.socket;
 
-import com.util.ActionUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -8,26 +7,23 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.Getter;
 import org.slf4j.LoggerFactory;
 
+@Getter
 public class ServerAcceptor {
 
     ServerBootstrap serverBootstrap;
     EventLoopGroup boss;
     EventLoopGroup worker;
+    ActionEventManager actionEventManager;
 
-    public ServerAcceptor(SessionListener sessionListener, ChannelHandler channelHandler) {
+    public ServerAcceptor() {
         init();
-        ActionUtils.getInst().addSessionListener(sessionListener);
-        //添加handler，管道中的处理器，通过ChannelInitializer来构造
-        serverBootstrap.childHandler(channelHandler);
-        //设置参数，TCP参数
-        serverBootstrap.option(ChannelOption.SO_BACKLOG, 2048);   //连接缓冲池的大小
-        serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);//维持链接的活跃，清除死链接
-        serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);//关闭延迟发送
     }
 
     private void init() {
+        actionEventManager = new ActionEventManager();
         //定义server启动类
         serverBootstrap = new ServerBootstrap();
         //定义工作组:boss分发请求给各个worker:boss负责监听端口请求，worker负责处理请求（读写）
@@ -37,6 +33,19 @@ public class ServerAcceptor {
         serverBootstrap.group(boss, worker);
         //设置通道channel
         serverBootstrap.channel(NioServerSocketChannel.class);//A
+        //设置参数，TCP参数
+        serverBootstrap.option(ChannelOption.SO_BACKLOG, 2048);   //连接缓冲池的大小
+        serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);//维持链接的活跃，清除死链接
+        serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);//关闭延迟发送
+    }
+
+    public void addListener(SessionListener sessionListener) {
+        actionEventManager.addSessionListener(sessionListener);
+    }
+
+    public void handler(ChannelHandler channelHandler) {
+        //添加handler，管道中的处理器，通过ChannelInitializer来构造
+        serverBootstrap.childHandler(channelHandler);
     }
 
     /**
@@ -84,7 +93,7 @@ public class ServerAcceptor {
      */
     public void registerAction(ActionHandler<?> handler, int... actions) {
         for (int action : actions) {
-            ActionUtils.getInst().registerAction(action, handler);
+            actionEventManager.registerAction(action, handler);
         }
     }
 
@@ -95,7 +104,7 @@ public class ServerAcceptor {
      */
     public void removeAction(int... actions) {
         for (int action : actions) {
-            ActionUtils.getInst().removeAction(action);
+            actionEventManager.removeAction(action);
         }
     }
 
@@ -106,7 +115,7 @@ public class ServerAcceptor {
      * @return
      */
     public ActionHandler<?> getAction(int action) {
-        return ActionUtils.getInst().getAction(action);
+        return actionEventManager.getAction(action);
     }
 
 }

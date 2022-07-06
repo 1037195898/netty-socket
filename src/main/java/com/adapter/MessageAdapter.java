@@ -1,7 +1,7 @@
 package com.adapter;
 
 import com.socket.ActionData;
-import com.util.ActionUtils;
+import com.socket.ActionEventManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -16,6 +16,10 @@ import java.util.Map;
 public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 
     protected Map<String, Long> sessionVerify = new HashMap<>();
+
+    public MessageAdapter(ActionEventManager actionEventManager) {
+        super(actionEventManager);
+    }
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -40,7 +44,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 //        if (sessionVerify.containsKey(ctx.channel().id().asLongText())
 //                && msg.getVerify() > sessionVerify.get(ctx.channel().id().asLongText())) {
 //            sessionVerify.put(ctx.channel().id().asLongText(), msg.getVerify());
-            ActionUtils.getInst().executeActionMapping(msg, ctx, msg);
+            actionEventManager.executeActionMapping(msg, ctx, msg);
 //        }
     }
 
@@ -55,10 +59,10 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 //        super.exceptionCaught(ctx, cause);
 //        logger.error("client caught exception", cause);
         if (cause instanceof IOException) {
-            ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
+            actionEventManager.getIosIdle().remove(ctx.channel().id().asLongText());
             sessionVerify.remove(ctx.channel().id().asLongText());
         }
-        ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(ctx, cause));
+        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(ctx, cause));
         ctx.close();
     }
 

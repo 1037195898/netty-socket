@@ -30,7 +30,9 @@ public class ClientWeb implements SessionListener {
         URI uri = URI.create("ws://localhost:9099/ws");
 
         SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
-        ClientAcceptor clientAcceptor = new ClientAcceptor(this, new WebSocketChannelInitializer(uri, false,
+        ClientAcceptor clientAcceptor = new ClientAcceptor();
+        clientAcceptor.addListener(this);
+        clientAcceptor.handler(new WebSocketChannelInitializer(uri, false,
                 (channel, pipeline) -> {
                     try {
                         int port = uri.getPort();
@@ -48,7 +50,7 @@ public class ClientWeb implements SessionListener {
                         throw new RuntimeException(e);
                     }
                 },
-                new MessageAdapter(),
+                new MessageAdapter(clientAcceptor.getActionEventManager()),
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
         ));
         clientAcceptor.registerAction(new WebHandler(), 100);

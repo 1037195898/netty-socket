@@ -19,10 +19,11 @@ public class ServerWeb implements SessionListener {
     public ServerWeb() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         LoggerFactory.getLogger(getClass()).info("开始");
-        ServerAcceptor serverAcceptor = new ServerAcceptor(this,
-                new WebSocketChannelInitializer(new MessageAdapter()
-                        , new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
-                ));
+        ServerAcceptor serverAcceptor = new ServerAcceptor();
+        serverAcceptor.addListener(this);
+        serverAcceptor.handler(new WebSocketChannelInitializer(new MessageAdapter(serverAcceptor.getActionEventManager()),
+                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
+        ));
         serverAcceptor.registerAction(new WebHandler(), 100);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");

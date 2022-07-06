@@ -2,27 +2,24 @@ package com.ioByte;
 
 import com.adapter.MessageAdapter;
 import com.initializer.ByteChannelHandler;
-import com.parse.MessageDecoder;
-import com.parse.MessageEncoder;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.SessionListener;
-import io.netty.channel.*;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class Client implements SessionListener {
 
     public Client() {
         System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
 
-        ClientAcceptor clientAcceptor = new ClientAcceptor(this,
-                new ByteChannelHandler(
-                        new MessageAdapter()));
+        ClientAcceptor clientAcceptor = new ClientAcceptor();
+        clientAcceptor.addListener(this);
+        clientAcceptor.handler(new ByteChannelHandler(
+                new MessageAdapter(clientAcceptor.getActionEventManager())));
         clientAcceptor.registerAction(new ByteChannelAdapter(), 100);
         clientAcceptor.connect("0.0.0.0", 9099);
 

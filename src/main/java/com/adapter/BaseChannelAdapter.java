@@ -1,7 +1,7 @@
 package com.adapter;
 
 import com.socket.ActionData;
-import com.util.ActionUtils;
+import com.socket.ActionEventManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
@@ -14,6 +14,12 @@ import java.util.Map;
 
 public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
 
+    protected ActionEventManager actionEventManager;
+
+    public BaseChannelAdapter(ActionEventManager actionEventManager) {
+        this.actionEventManager = actionEventManager;
+    }
+
     /**
      * 新的客户端连接事件
      * @param ctx
@@ -23,7 +29,7 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         super.handlerAdded(ctx);
         LoggerFactory.getLogger(getClass()).debug("新建连接");
-        ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionCreated(ctx));
+        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.sessionCreated(ctx));
     }
 
     /**
@@ -35,8 +41,8 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         super.handlerRemoved(ctx);
         LoggerFactory.getLogger(getClass()).debug("断开连接");
-        ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
-        ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionClosed(ctx));
+        actionEventManager.getIosIdle().remove(ctx.channel().id().asLongText());
+        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.sessionClosed(ctx));
     }
 
     /**
@@ -58,7 +64,7 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.ALL_IDLE) {
                 String id = ctx.channel().id().asLongText();
-                Map<String, Integer> iosIdle = ActionUtils.getInst().getIosIdle();
+                Map<String, Integer> iosIdle = actionEventManager.getIosIdle();
                 if (iosIdle.containsKey(id)) {
                     Integer count = iosIdle.get(id);
                     if (count < 3) {
@@ -75,14 +81,14 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                     ctx.writeAndFlush(new ActionData<>(1));
                 }
             }
-            ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
+            actionEventManager.getListeners().forEach(sessionListener -> sessionListener.sessionIdle(ctx, e.state()));
         } else if (evt instanceof WebSocketClientProtocolHandler.ClientHandshakeStateEvent) {
             if (evt == WebSocketClientProtocolHandler.ClientHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-                ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
+                actionEventManager.getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
             }
         } else if (evt instanceof WebSocketServerProtocolHandler.ServerHandshakeStateEvent) {
             if (evt == WebSocketServerProtocolHandler.ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-                ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
+                actionEventManager.getListeners().forEach(sessionListener -> sessionListener.handshakeComplete(ctx));
             }
         }
         // 执行父类的方法
@@ -102,8 +108,8 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, T msg) throws Exception {
-        ActionUtils.getInst().getListeners().forEach(sessionListener -> sessionListener.messageReceived(ctx, msg));
-        ActionUtils.getInst().getIosIdle().remove(ctx.channel().id().asLongText());
+        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.messageReceived(ctx, msg));
+        actionEventManager.getIosIdle().remove(ctx.channel().id().asLongText());
     }
 
 }
