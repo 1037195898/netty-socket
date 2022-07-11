@@ -5,6 +5,8 @@ import com.initializer.WebSocketChannelInitializer;
 import com.socket.ActionData;
 import com.socket.ServerAcceptor;
 import com.socket.SessionListener;
+import com.util.SocketType;
+import com.util.SocketUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -17,19 +19,21 @@ import java.util.concurrent.TimeUnit;
 public class ServerWeb implements SessionListener {
 
     public ServerWeb() {
-        System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         LoggerFactory.getLogger(getClass()).info("开始");
+
+        SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
         ServerAcceptor serverAcceptor = new ServerAcceptor();
         serverAcceptor.addListener(this);
-        serverAcceptor.handler(new WebSocketChannelInitializer(new MessageAdapter(serverAcceptor.getActionEventManager()),
+        serverAcceptor.handler(new WebSocketChannelInitializer(null, true, new MessageAdapter(serverAcceptor.getActionEventManager()),
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
         ));
-        serverAcceptor.registerAction(new WebHandler(), 100);
+        serverAcceptor.registerAction(new WebHandler(), 100, 1);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");
     }
 
     public static void main(String[] args) {
+        System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket/webServer");
         new ServerWeb();
     }
 

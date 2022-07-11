@@ -15,6 +15,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -25,27 +26,31 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientWeb implements SessionListener {
 
+    private final ClientAcceptor clientAcceptor;
+
     public ClientWeb() {
-        System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket");
         URI uri = URI.create("ws://localhost:9099/ws");
 
         SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
-        ClientAcceptor clientAcceptor = new ClientAcceptor();
+        clientAcceptor = new ClientAcceptor();
         clientAcceptor.addListener(this);
-        clientAcceptor.handler(new WebSocketChannelInitializer(uri, false,
+        clientAcceptor.handler(new WebSocketChannelInitializer(uri, true,
                 (channel, pipeline) -> {
                     try {
+                        boolean isSsl = uri.getScheme().equals("wss");
                         int port = uri.getPort();
                         if (port == -1) {
-                            if (uri.getScheme().equals("wss")) {
+                            if (isSsl) {
                                 port = 443;
                             } else {
                                 port = 80;
                             }
                         }
-                        SslContext t = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-                        SslHandler c = t.newHandler(channel.alloc(), uri.getHost(), port);
-                        pipeline.addFirst(c);
+                        if (isSsl) {
+                            SslContext t = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+                            SslHandler c = t.newHandler(channel.alloc(), uri.getHost(), port);
+                            pipeline.addFirst(c);
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -76,6 +81,7 @@ public class ClientWeb implements SessionListener {
     }
 
     public static void main(String[] args) {
+        System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket/webClient");
         new ClientWeb();
     }
 
@@ -97,7 +103,7 @@ public class ClientWeb implements SessionListener {
 
     @Override
     public void sessionIdle(ChannelHandlerContext session, IdleState status) {
-
+        clientAcceptor.writeAndFlush(new ActionData<>(1));
     }
 
     @Override
@@ -124,7 +130,7 @@ public class ClientWeb implements SessionListener {
 
     @Override
     public void handshakeComplete(ChannelHandlerContext session) {
-
+        LoggerFactory.getLogger(getClass()).info("handshakeComplete");
     }
 
 }

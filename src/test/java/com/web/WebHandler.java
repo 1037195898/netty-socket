@@ -12,6 +12,12 @@ public class WebHandler implements ActionHandler<Object> {
 
     @Override
     public void execute(ActionData<Object> actionData, ChannelHandlerContext session) {
+
+        if (actionData.getAction() == 1) {
+            System.out.println("心跳");
+            return;
+        }
+
         GameInput gameInput = new GameInput(actionData.getBuf());
         try {
             LoggerFactory.getLogger(getClass()).debug("channelRead0: " + gameInput.readUTF());
