@@ -1,9 +1,9 @@
 package com.socket;
 
+import com.util.IOUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -54,38 +54,30 @@ public class ClientAcceptor {
     }
 
     /**
-     * 发送消息并获得成功监听
+     * 这次发送只能是最后一次连接的socket 发送消息并获得成功监听
      *
      * @param msg
      * @return
      */
-    public ChannelFuture writeAndFlush(Object msg) {
-        ChannelFuture future = writeFlush(msg);
-        if (future.isSuccess()) {
-            future.addListener((ChannelFutureListener) future1 -> {
-                actionEventManager.getListeners()
-                        .forEach(sessionListener ->
-                                sessionListener.messageSent(msg));
-            });
-        }
-        return future;
+    public ChannelFuture writeFlush(Object msg) {
+        return IOUtils.getSession(channelFuture.channel()).writeFlush(msg);
     }
 
     /**
-     * 直接发送消息不监听成功与否
+     * 这次发送只能是最后一次连接的socket 直接发送消息不监听成功与否
      * @param msg
      * @return
      */
-    public ChannelFuture writeFlush(Object msg) {
-        return channelFuture.channel().writeAndFlush(msg);
+    public ChannelFuture writeAndFlush(Object msg) {
+        return IOUtils.getSession(channelFuture.channel()).writeAndFlush(msg);
     }
 
     public ChannelFuture write(Object msg) {
-        return channelFuture.channel().write(msg);
+        return IOUtils.getSession(channelFuture.channel()).write(msg);
     }
 
     public Channel flush() {
-        return channelFuture.channel().flush();
+        return IOUtils.getSession(channelFuture.channel()).flush();
     }
 
     public Future<?> stop() {

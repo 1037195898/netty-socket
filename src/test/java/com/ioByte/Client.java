@@ -4,8 +4,8 @@ import com.adapter.MessageAdapter;
 import com.initializer.ByteChannelHandler;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
+import com.socket.IoSession;
 import com.socket.SessionListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 
 import java.nio.charset.StandardCharsets;
@@ -45,22 +45,22 @@ public class Client implements SessionListener {
     }
 
     @Override
-    public void sessionCreated(ChannelHandlerContext session) {
+    public void sessionCreated(IoSession session) {
 
     }
 
     @Override
-    public void sessionClosed(ChannelHandlerContext session) {
+    public void sessionClosed(IoSession session) {
 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext session, Throwable cause) {
+    public void exceptionCaught(IoSession session, Throwable cause) {
 
     }
 
     @Override
-    public void sessionIdle(ChannelHandlerContext session, IdleState status) {
+    public void sessionIdle(IoSession session, IdleState status) {
 
     }
 
@@ -70,17 +70,17 @@ public class Client implements SessionListener {
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext session, Object message) {
+    public void messageReceived(IoSession session, Object message) {
         System.out.println("messageReceived:" + message);
     }
 
     @Override
-    public void notRegAction(ChannelHandlerContext session, Object message) {
+    public void notRegAction(IoSession session, Object message) {
 
     }
 
     @Override
-    public void handshakeComplete(ChannelHandlerContext session) {
+    public void handshakeComplete(IoSession session) {
 
     }
 

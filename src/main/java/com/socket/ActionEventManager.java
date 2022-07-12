@@ -1,7 +1,5 @@
 package com.socket;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +70,7 @@ public class ActionEventManager {
      * @throws Exception
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void executeActionMapping(ActionData data, ChannelHandlerContext session, Object message) throws Exception {
+    public void executeActionMapping(ActionData data, IoSession session, Object message) throws Exception {
         int action = data.getAction();
 //		log.info("检测处理器["+action+"]");
         if (!actionMapping.containsKey(action)) {

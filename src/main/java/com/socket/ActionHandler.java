@@ -1,7 +1,5 @@
 package com.socket;
 
-import io.netty.channel.ChannelHandlerContext;
-
 public abstract interface ActionHandler<T>{
 	
 	/**
@@ -9,6 +7,6 @@ public abstract interface ActionHandler<T>{
 	 * @param actionData
 	 * @param session
 	 */
-	abstract void execute (ActionData<T> actionData, ChannelHandlerContext session);
+	abstract void execute (ActionData<T> actionData, IoSession session);
 	
 }

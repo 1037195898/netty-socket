@@ -5,17 +5,16 @@ import com.entity.GameOutput;
 import com.initializer.WebSocketChannelInitializer;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
+import com.socket.IoSession;
 import com.socket.SessionListener;
 import com.util.SocketType;
 import com.util.SocketUtils;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ public class ClientWeb implements SessionListener {
                     }
                 },
                 new MessageAdapter(clientAcceptor.getActionEventManager()),
-                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
+                new IdleStateHandler(3, 3, 5, TimeUnit.SECONDS)
         ));
         clientAcceptor.registerAction(new WebHandler(), 100);
         try {
@@ -86,24 +85,24 @@ public class ClientWeb implements SessionListener {
     }
 
     @Override
-    public void sessionCreated(ChannelHandlerContext session) {
+    public void sessionCreated(IoSession session) {
 
     }
 
     @Override
-    public void sessionClosed(ChannelHandlerContext session) {
+    public void sessionClosed(IoSession session) {
         System.out.println("断开了");
         System.exit(0);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext session, Throwable cause) {
+    public void exceptionCaught(IoSession session, Throwable cause) {
 
     }
 
     @Override
-    public void sessionIdle(ChannelHandlerContext session, IdleState status) {
-        clientAcceptor.writeAndFlush(new ActionData<>(1));
+    public void sessionIdle(IoSession session, IdleState status) {
+        session.writeFlush(new ActionData<>(1));
     }
 
     @Override
@@ -112,12 +111,12 @@ public class ClientWeb implements SessionListener {
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext session, Object message) {
+    public void messageReceived(IoSession session, Object message) {
         System.out.println("messageReceived:" + message);
     }
 
     @Override
-    public void notRegAction(ChannelHandlerContext session, Object message) {
+    public void notRegAction(IoSession session, Object message) {
         if (message instanceof ActionData<?>) {
             if (((ActionData<?>) message).getAction() == -100) {
                 LoggerFactory.getLogger(getClass()).debug("notRegAction:" +
@@ -129,7 +128,7 @@ public class ClientWeb implements SessionListener {
     }
 
     @Override
-    public void handshakeComplete(ChannelHandlerContext session) {
+    public void handshakeComplete(IoSession session) {
         LoggerFactory.getLogger(getClass()).info("handshakeComplete");
     }
 

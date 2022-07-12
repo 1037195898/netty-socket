@@ -3,9 +3,9 @@ package com.ioByte;
 import com.adapter.MessageAdapter;
 import com.initializer.ByteChannelHandler;
 import com.socket.ActionData;
+import com.socket.IoSession;
 import com.socket.ServerAcceptor;
 import com.socket.SessionListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -34,24 +34,24 @@ public class Server implements SessionListener {
     }
 
     @Override
-    public void sessionCreated(ChannelHandlerContext session) {
+    public void sessionCreated(IoSession session) {
         System.out.println("连接一个=" + session.channel().id().asLongText());
     }
 
     @Override
-    public void sessionClosed(ChannelHandlerContext session) {
+    public void sessionClosed(IoSession session) {
         System.out.println("断开一个"+session.channel().id().asLongText());
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext session, Throwable cause) {
+    public void exceptionCaught(IoSession session, Throwable cause) {
         session.channel().closeFuture();
         System.out.println("意外断开一个"+session.channel().id().asLongText());
 //        cause.printStackTrace();
     }
 
     @Override
-    public void sessionIdle(ChannelHandlerContext session, IdleState status) {
+    public void sessionIdle(IoSession session, IdleState status) {
         System.out.println("sessionIdle");
     }
 
@@ -61,12 +61,12 @@ public class Server implements SessionListener {
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext session, Object message) {
+    public void messageReceived(IoSession session, Object message) {
 //        System.out.println("messageReceived");
     }
 
     @Override
-    public void notRegAction(ChannelHandlerContext session, Object message) {
+    public void notRegAction(IoSession session, Object message) {
         if (message instanceof ActionData<?>) {
             if (((ActionData<?>) message).getAction() == -100) {
                 LoggerFactory.getLogger(getClass()).debug("notRegAction:" +
@@ -78,7 +78,7 @@ public class Server implements SessionListener {
     }
 
     @Override
-    public void handshakeComplete(ChannelHandlerContext session) {
+    public void handshakeComplete(IoSession session) {
 
     }
 

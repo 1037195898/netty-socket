@@ -2,6 +2,7 @@ package com.adapter;
 
 import com.socket.ActionData;
 import com.socket.ActionEventManager;
+import com.util.IOUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -44,7 +45,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 //        if (sessionVerify.containsKey(ctx.channel().id().asLongText())
 //                && msg.getVerify() > sessionVerify.get(ctx.channel().id().asLongText())) {
 //            sessionVerify.put(ctx.channel().id().asLongText(), msg.getVerify());
-            actionEventManager.executeActionMapping(msg, ctx, msg);
+            actionEventManager.executeActionMapping(msg, IOUtils.getSession(ctx), msg);
 //        }
     }
 
@@ -62,7 +63,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
             actionEventManager.getIosIdle().remove(ctx.channel().id().asLongText());
             sessionVerify.remove(ctx.channel().id().asLongText());
         }
-        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(ctx, cause));
+        actionEventManager.getListeners().forEach(sessionListener -> sessionListener.exceptionCaught(IOUtils.getSession(ctx), cause));
         ctx.close();
     }
 
