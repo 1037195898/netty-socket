@@ -1,6 +1,9 @@
 package com.socket;
 
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 
 /**
  * 通信会话包装
@@ -51,6 +54,37 @@ public class IoSession {
 
     public Channel channel() {
         return channelHandlerContext.channel();
+    }
+
+    public ChannelFuture close() {
+        return channel().close();
+    }
+    public ChannelFuture closeFuture() {
+        return channel().closeFuture();
+    }
+    public ChannelId id() {
+        return channel().id();
+    }
+    public boolean isActive() {
+        return channel().isActive();
+    }
+    public ByteBufAllocator alloc() {
+        return channel().alloc();
+    }
+    public boolean isWritable() {
+        return channel().isWritable();
+    }
+    public boolean isOpen() {
+        return channel().isOpen();
+    }
+    public <T> Attribute<T> attr(AttributeKey<T> key) {
+        return channel().attr(key);
+    }
+    public <T> boolean hasAttr(AttributeKey<T> key) {
+        return channel().hasAttr(key);
+    }
+    public ChannelPipeline pipeline() {
+        return channel().pipeline();
     }
 
 }
