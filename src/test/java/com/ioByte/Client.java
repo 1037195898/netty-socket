@@ -65,7 +65,7 @@ public class Client implements SessionListener {
     }
 
     @Override
-    public void messageSent(Object message) {
+    public void messageSent(IoSession session, Object message) {
 
     }
 

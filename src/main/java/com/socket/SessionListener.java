@@ -35,7 +35,7 @@ public interface SessionListener<T> {
 	 * 当消息被成功发送出去的时候，此方法被调用。
 	 * @param message
 	 */
-	void messageSent(T message);
+	void messageSent(IoSession session,T message);
 
 	/**
 	 * 当接收到新的消息的时候，此方法被调用。

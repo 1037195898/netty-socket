@@ -1,5 +1,6 @@
 package com.socket;
 
+import com.util.IOUtils;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.util.Attribute;
@@ -29,7 +30,7 @@ public class IoSession {
             future.addListener((ChannelFutureListener) future1 -> {
                 actionEventManager.getListeners()
                         .forEach(sessionListener ->
-                                sessionListener.messageSent(msg));
+                                sessionListener.messageSent(IOUtils.getSession(future.channel()), msg));
             });
         }
         return future;
