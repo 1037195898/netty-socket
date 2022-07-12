@@ -2,7 +2,13 @@ package com.socket;
 
 import com.entity.GameInput;
 import com.entity.GameOutput;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
+@Accessors(chain = true)
+@Data
 public class ActionData<T> {
 
     /**
@@ -44,46 +50,8 @@ public class ActionData<T> {
         this.buf = output.toByteArray();
     }
 
-    public int getAction() {
-        return action;
-    }
-
-    public void setAction(int action) {
-        this.action = action;
-    }
-
-    public long getVerify() {
-        return verify;
-    }
-
-    public void setVerify(long verify) {
-        this.verify = verify;
-    }
-
-    public byte[] getBuf() {
-        return buf;
-    }
-
-    public void setBuf(byte[] buf) {
-        this.buf = buf;
-    }
-
     public GameInput getInput() {
         return new GameInput(buf);
-    }
-
-    public long getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(long sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    @Override
-    public String toString() {
-        return "ActionData [action=" + action + ", buf=" + (buf == null ? buf : buf.length)
-                + ", verify=" + verify + ", sessionId=" + sessionId + "]";
     }
 
 }
