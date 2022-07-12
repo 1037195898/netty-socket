@@ -10,7 +10,6 @@ import com.socket.ServerAcceptor;
 import com.socket.SessionListener;
 import com.util.SocketType;
 import com.util.SocketUtils;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.commons.lang3.StringUtils;

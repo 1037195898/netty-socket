@@ -35,6 +35,7 @@ public class ServerAcceptor {
         serverBootstrap.channel(NioServerSocketChannel.class);//A
         //设置参数，TCP参数
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 2048);   //连接缓冲池的大小
+        serverBootstrap.childOption(ChannelOption.SO_REUSEADDR, true);//加上这句话，避免重启时提示地址被占用
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);//维持链接的活跃，清除死链接
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);//关闭延迟发送
     }
