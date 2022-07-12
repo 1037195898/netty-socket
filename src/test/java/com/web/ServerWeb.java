@@ -2,6 +2,8 @@ package com.web;
 
 import com.adapter.MessageAdapter;
 import com.initializer.WebSocketChannelInitializer;
+import com.parse.WebSocketDecoder;
+import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.IoSession;
 import com.socket.ServerAcceptor;
@@ -25,9 +27,11 @@ public class ServerWeb implements SessionListener {
         SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
         ServerAcceptor serverAcceptor = new ServerAcceptor();
         serverAcceptor.addListener(this);
-        serverAcceptor.handler(new WebSocketChannelInitializer(null, true,
+        serverAcceptor.handler(new WebSocketChannelInitializer(
                 new MessageAdapter(serverAcceptor.getActionEventManager()),
-                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
+                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
+                WebSocketDecoder.getInst(true),
+                WebSocketEncoder.getInst(true)
         ));
         serverAcceptor.registerAction(new WebHandler(), 100, 1);
         serverAcceptor.bind(9099);

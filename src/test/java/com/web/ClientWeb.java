@@ -3,6 +3,8 @@ package com.web;
 import com.adapter.MessageAdapter;
 import com.entity.GameOutput;
 import com.initializer.WebSocketChannelInitializer;
+import com.parse.WebSocketDecoder;
+import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.IoSession;
@@ -33,7 +35,7 @@ public class ClientWeb implements SessionListener {
         SocketUtils.webSocketType = SocketType.BINARY_WEB_SOCKET_FRAME;
         clientAcceptor = new ClientAcceptor();
         clientAcceptor.addListener(this);
-        clientAcceptor.handler(new WebSocketChannelInitializer(uri, true,
+        clientAcceptor.handler(new WebSocketChannelInitializer(uri,
                 (channel, pipeline) -> {
                     try {
                         boolean isSsl = uri.getScheme().equals("wss");
@@ -55,7 +57,9 @@ public class ClientWeb implements SessionListener {
                     }
                 },
                 new MessageAdapter(clientAcceptor.getActionEventManager()),
-                new IdleStateHandler(3, 3, 5, TimeUnit.SECONDS)
+                new IdleStateHandler(3, 3, 5, TimeUnit.SECONDS),
+                WebSocketDecoder.getInst(true),
+                WebSocketEncoder.getInst(true)
         ));
         clientAcceptor.registerAction(new WebHandler(), 100);
         try {

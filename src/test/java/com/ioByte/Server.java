@@ -2,6 +2,8 @@ package com.ioByte;
 
 import com.adapter.MessageAdapter;
 import com.initializer.ByteChannelHandler;
+import com.parse.WebSocketDecoder;
+import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.IoSession;
 import com.socket.ServerAcceptor;
@@ -23,7 +25,10 @@ public class Server implements SessionListener {
         serverAcceptor.addListener(this);
         serverAcceptor.handler(new ByteChannelHandler(
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
-                new MessageAdapter(serverAcceptor.getActionEventManager())));
+                new MessageAdapter(serverAcceptor.getActionEventManager()),
+                WebSocketDecoder.getInst(true),
+                WebSocketEncoder.getInst(true)
+        ));
         serverAcceptor.registerAction(new ByteChannelAdapter(), 100);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");

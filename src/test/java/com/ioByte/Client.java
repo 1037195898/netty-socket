@@ -2,6 +2,8 @@ package com.ioByte;
 
 import com.adapter.MessageAdapter;
 import com.initializer.ByteChannelHandler;
+import com.parse.WebSocketDecoder;
+import com.parse.WebSocketEncoder;
 import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.IoSession;
@@ -19,7 +21,10 @@ public class Client implements SessionListener {
         ClientAcceptor clientAcceptor = new ClientAcceptor();
         clientAcceptor.addListener(this);
         clientAcceptor.handler(new ByteChannelHandler(
-                new MessageAdapter(clientAcceptor.getActionEventManager())));
+                new MessageAdapter(clientAcceptor.getActionEventManager()),
+                WebSocketDecoder.getInst(true),
+                WebSocketEncoder.getInst(true)
+        ));
         clientAcceptor.registerAction(new ByteChannelAdapter(), 100);
         clientAcceptor.connect("0.0.0.0", 9099);
 

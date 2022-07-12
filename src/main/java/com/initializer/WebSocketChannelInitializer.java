@@ -1,7 +1,5 @@
 package com.initializer;
 
-import com.parse.WebSocketDecoder;
-import com.parse.WebSocketEncoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -10,7 +8,10 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
@@ -24,35 +25,22 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
     private final URI clientUri;
     private IPipeline iPipeline;
     private ChannelHandler[] channelHandler;
-    /** 是否加密 */
-    private boolean isEncrypt;
 
     public WebSocketChannelInitializer(ChannelHandler... channelHandler) {
         this(null, channelHandler);
     }
 
     /**
-     * 默认不加密
-     * @param clientUri
+     *
+     * @param clientUri 客户端使用的url
      * @param channelHandler
      */
     public WebSocketChannelInitializer(URI clientUri, ChannelHandler... channelHandler) {
-        this(clientUri,false, channelHandler);
+        this(clientUri, null, channelHandler);
     }
 
-    /**
-     *
-     * @param clientUri 客户端使用的url
-     * @param isEncrypt 是否加密
-     * @param channelHandler
-     */
-    public WebSocketChannelInitializer(URI clientUri, boolean isEncrypt, ChannelHandler... channelHandler) {
-        this(clientUri, isEncrypt, null, channelHandler);
-    }
-
-    public WebSocketChannelInitializer(URI clientUri, boolean isEncrypt, IPipeline pipeline, ChannelHandler... channelHandler) {
+    public WebSocketChannelInitializer(URI clientUri, IPipeline pipeline, ChannelHandler... channelHandler) {
         this.clientUri = clientUri;
-        this.isEncrypt = isEncrypt;
         this.iPipeline = pipeline;
         this.channelHandler = channelHandler;
     }
