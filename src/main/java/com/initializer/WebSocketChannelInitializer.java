@@ -82,8 +82,8 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
                     null, false, new DefaultHttpHeaders(), Integer.MAX_VALUE)));
         }
 
-        pipeline.addLast(WebSocketDecoder.getInst(isEncrypt));// 使用单例 节约创建类
-        pipeline.addLast(WebSocketEncoder.getInst(isEncrypt));// 使用单例 节约创建类
+//        pipeline.addLast(WebSocketDecoder.getInst(isEncrypt));// 使用单例 节约创建类
+//        pipeline.addLast(WebSocketEncoder.getInst(isEncrypt));// 使用单例 节约创建类
 
         // 添加自定义的Handler
         for (int i = 0; i < channelHandler.length; i++) {
