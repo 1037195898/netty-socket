@@ -5,6 +5,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
@@ -95,6 +96,7 @@ public class ClientAcceptor {
         bootstrap.group(worker);
         //设置通道
         bootstrap.channel(NioSocketChannel.class);
+        bootstrap.option(ChannelOption.SO_REUSEADDR, true);//加上这句话，避免重启时提示地址被占用
     }
 
     /**
