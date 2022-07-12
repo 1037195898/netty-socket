@@ -21,9 +21,9 @@ public class Client implements SessionListener {
         ClientAcceptor clientAcceptor = new ClientAcceptor();
         clientAcceptor.addListener(this);
         clientAcceptor.handler(new ByteChannelHandler(
-                new MessageAdapter(clientAcceptor.getActionEventManager()),
                 WebSocketDecoder.getInst(true),
-                WebSocketEncoder.getInst(true)
+                WebSocketEncoder.getInst(true),
+                new MessageAdapter(clientAcceptor.getActionEventManager())
         ));
         clientAcceptor.registerAction(new ByteChannelAdapter(), 100);
         clientAcceptor.connect("0.0.0.0", 9099);

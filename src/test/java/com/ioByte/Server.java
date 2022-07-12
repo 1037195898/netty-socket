@@ -24,10 +24,10 @@ public class Server implements SessionListener {
         ServerAcceptor serverAcceptor = new ServerAcceptor();
         serverAcceptor.addListener(this);
         serverAcceptor.handler(new ByteChannelHandler(
-                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
-                new MessageAdapter(serverAcceptor.getActionEventManager()),
                 WebSocketDecoder.getInst(true),
-                WebSocketEncoder.getInst(true)
+                WebSocketEncoder.getInst(true),
+                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
+                new MessageAdapter(serverAcceptor.getActionEventManager())
         ));
         serverAcceptor.registerAction(new ByteChannelAdapter(), 100);
         serverAcceptor.bind(9099);

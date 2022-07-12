@@ -39,6 +39,10 @@ public class GameInput {
         return inputStream.readInt();
     }
 
+    public int readShort() throws IOException {
+        return inputStream.readShort();
+    }
+
     public String readUTF() throws IOException {
         return inputStream.readUTF();
     }

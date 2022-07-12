@@ -28,10 +28,10 @@ public class ServerWeb implements SessionListener {
         ServerAcceptor serverAcceptor = new ServerAcceptor();
         serverAcceptor.addListener(this);
         serverAcceptor.handler(new WebSocketChannelInitializer(
-                new MessageAdapter(serverAcceptor.getActionEventManager()),
-                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS),
                 WebSocketDecoder.getInst(true),
-                WebSocketEncoder.getInst(true)
+                WebSocketEncoder.getInst(true),
+                new MessageAdapter(serverAcceptor.getActionEventManager()),
+                new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
         ));
         serverAcceptor.registerAction(new WebHandler(), 100, 1);
         serverAcceptor.bind(9099);
@@ -50,13 +50,13 @@ public class ServerWeb implements SessionListener {
 
     @Override
     public void sessionClosed(IoSession session) {
-        System.out.println("断开一个"+session.channel().id().asLongText());
+        System.out.println("断开一个" + session.channel().id().asLongText());
     }
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) {
         session.channel().closeFuture();
-        System.out.println("意外断开一个"+session.channel().id().asLongText());
+        System.out.println("意外断开一个" + session.channel().id().asLongText());
 //        cause.printStackTrace();
     }
 

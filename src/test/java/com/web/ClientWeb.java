@@ -56,10 +56,10 @@ public class ClientWeb implements SessionListener {
                         throw new RuntimeException(e);
                     }
                 },
-                new MessageAdapter(clientAcceptor.getActionEventManager()),
-                new IdleStateHandler(3, 3, 5, TimeUnit.SECONDS),
                 WebSocketDecoder.getInst(true),
-                WebSocketEncoder.getInst(true)
+                WebSocketEncoder.getInst(true),
+                new MessageAdapter(clientAcceptor.getActionEventManager()),
+                new IdleStateHandler(3, 3, 5, TimeUnit.SECONDS)
         ));
         clientAcceptor.registerAction(new WebHandler(), 100);
         try {
