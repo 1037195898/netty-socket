@@ -22,7 +22,7 @@ public class ActionUtils {
 
 
     public static void addAction(Object object) {
-        Method[] methods = MethodUtils.getMethodsWithAnnotation(object.getClass(), SocketAction.class);
+        Method[] methods = MethodUtils.getMethodsWithAnnotation(object.getClass(), SocketAction.class, true, true);
         for (Method method : methods) {
             SocketAction action = MethodUtils.getAnnotation(method, SocketAction.class, true, true);
             if (action != null) addAction(action, method, object);
@@ -108,7 +108,9 @@ class ActionMethod {
                 }
             }
         }
+        method.setAccessible(true);
         method.invoke(object, obj);
+        method.setAccessible(false);
     }
 
 }

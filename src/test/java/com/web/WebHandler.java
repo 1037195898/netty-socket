@@ -22,7 +22,7 @@ public class WebHandler implements ActionHandler<Object> {
     }
 
     @SocketAction(1)
-    public void heartbeat() {
+    private void heartbeat() {
         System.out.println("心跳1");
     }
 
@@ -37,7 +37,7 @@ public class WebHandler implements ActionHandler<Object> {
     }
 
     @SocketAction(1)
-    public void heartbeat(ActionData<Object> actionData) {
+    private void heartbeat(ActionData<Object> actionData) {
         System.out.println("心跳4 " + actionData);
     }
 
