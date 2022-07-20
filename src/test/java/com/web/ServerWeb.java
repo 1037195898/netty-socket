@@ -8,10 +8,12 @@ import com.socket.ActionData;
 import com.socket.IoSession;
 import com.socket.ServerAcceptor;
 import com.socket.SessionListener;
+import com.util.ActionUtils;
 import com.util.SocketType;
 import com.util.SocketUtils;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerWeb implements SessionListener {
 
+    @SneakyThrows
     public ServerWeb() {
         LoggerFactory.getLogger(getClass()).info("开始");
 
@@ -32,7 +35,10 @@ public class ServerWeb implements SessionListener {
                 new MessageAdapter(serverAcceptor.getActionEventManager()),
                 new IdleStateHandler(5, 5, 10, TimeUnit.SECONDS)
         ));
-        serverAcceptor.registerAction(new WebHandler(), 100, 1);
+
+        WebHandler handler = new WebHandler();
+        ActionUtils.addAction(handler);
+        serverAcceptor.registerAction(handler, 100);
         serverAcceptor.bind(9099);
         System.out.println("测试服务器开启!按任意键+回车关闭");
     }
