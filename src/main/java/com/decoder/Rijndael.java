@@ -35,6 +35,7 @@ public class Rijndael {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Rijndael.class);
 
+    /** aes 缓存模式 */
     private static final Map<String, Rijndael> AES_CACHES = new HashMap<>();
 
     /**
