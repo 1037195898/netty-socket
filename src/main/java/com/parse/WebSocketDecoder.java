@@ -17,8 +17,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * 解析收到的数据
  */
@@ -76,7 +74,7 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
             // 解压
             bytes = ZlibUtil.decompress(bytes);
             // 解密
-            bytes = IOUtils.getAes(ctx.channel()).decrypt(bytes);
+            bytes = IOUtils.getAes().decrypt(bytes);
         }
         ActionData<?> data = new ActionData<>(0);
 //        System.out.println("事件头="+data.getAction());

@@ -13,7 +13,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 @ChannelHandler.Sharable
 public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
 
-    private static MessageEncoder encoder;
+    private static volatile MessageEncoder encoder;
     public static MessageEncoder getInst() {
         if (encoder == null) {
             synchronized (MessageEncoder.class) {
@@ -38,7 +38,7 @@ public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
             byte[] bytes = gameOutput.toByteArray();
             // 加密
 //			System.out.println(bytes.length);
-            String str = IOUtils.getAes(ctx.channel()).encrypt(bytes);
+            String str = IOUtils.getAes().encrypt(bytes);
             gameOutput.reset();
             bytes = str.getBytes();
             // 压缩

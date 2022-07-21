@@ -58,7 +58,7 @@ public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
             if (isEncrypt) {
                 // 加密
 //			        System.out.println(bytes.length);
-                String str = IOUtils.getAes(ctx.channel()).encrypt(buf);
+                String str = IOUtils.getAes().encrypt(buf);
                 buf = str.getBytes();
                 // 压缩
                 buf = ZlibUtil.compress(buf);
@@ -76,7 +76,7 @@ public class WebSocketEncoder extends MessageToMessageEncoder<ActionData<?>> {
                 if (isEncrypt) {
                     // 加密
 //			        System.out.println(bytes.length);
-                    String str = IOUtils.getAes(ctx.channel()).encrypt(bytes);
+                    String str = IOUtils.getAes().encrypt(bytes);
                     gameOutput.reset();
                     bytes = str.getBytes();
                     // 压缩

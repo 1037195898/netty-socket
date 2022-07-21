@@ -10,21 +10,17 @@ import io.netty.util.AttributeKey;
 
 public class IOUtils {
 
+    private static final ThreadLocal<AES> threadLocal = new ThreadLocal<>();
 
     /**
-     * 获取对象保存的 aes
-     *
-     * @param channel 渠道
+     * 获取当前线程保存的 aes
      * @return AES
      */
-    public static AES getAes(Channel channel) {
-        AttributeKey<AES> attributeKey = AttributeKey.valueOf("key_" + channel.id());
-        AES aes;
-        if (!channel.hasAttr(attributeKey)) {
+    public static AES getAes() {
+        AES aes = threadLocal.get();
+        if (aes == null) {
             aes = new AES();
-            channel.attr(attributeKey).set(aes);
-        } else {
-            aes = channel.attr(attributeKey).get();
+            threadLocal.set(aes);
         }
         return aes;
     }

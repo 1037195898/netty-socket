@@ -6,7 +6,6 @@ import com.util.IOUtils;
 import com.util.ZlibUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
@@ -47,7 +46,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
         // 解压
         byte[] by = ZlibUtil.decompress(bytes);
         // 解密
-        by = IOUtils.getAes(ctx.channel()).decrypt(by);
+        by = IOUtils.getAes().decrypt(by);
         GameInput input = new GameInput(by);
         ActionData<?> data = new ActionData<>(0);
 //        System.out.println("事件头="+data.getAction());

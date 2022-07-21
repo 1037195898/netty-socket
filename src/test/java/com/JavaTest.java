@@ -1,16 +1,22 @@
 package com;
 
-import com.decoder.Rijndael;
 import com.socket.ActionData;
 import com.socket.IoSession;
 import com.util.ActionUtils;
+import com.util.IOUtils;
 import com.web.WebHandler;
 import lombok.SneakyThrows;
+import org.junit.Before;
 import org.junit.Test;
 
-import javax.crypto.Cipher;
+import java.util.concurrent.TimeUnit;
 
 public class JavaTest {
+
+    @Before
+    public void before() {
+        System.setProperty("rootDir", "E:\\WorkSpace\\Idea\\Java\\NettySocket/webClient");
+    }
 
     @SneakyThrows
     @Test
@@ -29,18 +35,15 @@ public class JavaTest {
 
     @SneakyThrows
     @Test
-    public void cipherTest() {
-
-
+    public void aesTest() {
         for (int i = 0; i < 5; i++) {
-
-            System.out.println(Cipher.getInstance(Rijndael.AESMode.CBC_PKCS5.getName()));
-
+            new Thread(() -> {
+                for (int j = 0; j < 2; j++) {
+                    System.out.println(IOUtils.getAes());
+                }
+            }).start();
         }
-
-
-
-
+        TimeUnit.SECONDS.sleep(5000);
     }
 
 }
