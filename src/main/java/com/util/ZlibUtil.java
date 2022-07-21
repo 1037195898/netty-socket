@@ -12,23 +12,23 @@ public class ZlibUtil {
 	 * @throws Exception
 	 */
 	public static byte[] compress(byte[] data) throws Exception {
-		byte[] output = new byte[0];
-		Deflater compresser = new Deflater();
-		compresser.reset();
-		compresser.setInput(data);
-		compresser.finish();
+		byte[] output;
+		Deflater deflater = new Deflater();
+		deflater.reset();
+		deflater.setInput(data);
+		deflater.finish();
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
 		try {
 			byte[] buf = new byte[1024];
-			while (!compresser.finished()) {
-				int i = compresser.deflate(buf);
+			while (!deflater.finished()) {
+				int i = deflater.deflate(buf);
 				bos.write(buf, 0, i);
 			}
 			output = bos.toByteArray();
 		} finally {
 			bos.close();
 		}
-		compresser.end();
+		deflater.end();
 		return output;
 	}
 
@@ -38,22 +38,22 @@ public class ZlibUtil {
 	 * @throws Exception
 	 */
 	public static byte[] decompress(byte[] data) throws Exception {
-		byte[] output = new byte[0];
-		Inflater decompresser = new Inflater();
-		decompresser.reset();
-		decompresser.setInput(data);
+		byte[] output;
+		Inflater inflater = new Inflater();
+		inflater.reset();
+		inflater.setInput(data);
 		ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);
 		try {
 			byte[] buf = new byte[1024];
-			while (!decompresser.finished()) {
-				int i = decompresser.inflate(buf);
+			while (!inflater.finished()) {
+				int i = inflater.inflate(buf);
 				o.write(buf, 0, i);
 			}
 			output = o.toByteArray();
 		} finally {
 			o.close();
 		}
-		decompresser.end();
+		inflater.end();
 		return output;
 	}
 
