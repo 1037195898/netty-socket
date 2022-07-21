@@ -31,6 +31,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 
     /**
      * 处理器移除事件(断开连接)
+     *
      * @param ctx
      * @throws Exception
      */
@@ -46,13 +47,14 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 //        if (sessionVerify.containsKey(ctx.channel().id().asLongText())
 //                && msg.getVerify() > sessionVerify.get(ctx.channel().id().asLongText())) {
 //            sessionVerify.put(ctx.channel().id().asLongText(), msg.getVerify());
-            ActionUtils.run(msg.getAction(), msg, IOUtils.getSession(ctx));
-            actionEventManager.executeActionMapping(msg, IOUtils.getSession(ctx), msg);
+        boolean result = ActionUtils.run(msg.getAction(), msg, IOUtils.getSession(ctx));
+        actionEventManager.executeActionMapping(msg, IOUtils.getSession(ctx), msg, result);
 //        }
     }
 
     /**
      * 异常发生事件
+     *
      * @param ctx
      * @param cause
      * @throws Exception

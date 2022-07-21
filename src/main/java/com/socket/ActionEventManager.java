@@ -67,16 +67,19 @@ public class ActionEventManager {
      * @param data    数据
      * @param session 通信ioSession
      * @param message 未被解析的数据
+     * @param ignoreNotReg 是否忽略未注册事件发送监听
      * @throws Exception
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void executeActionMapping(ActionData data, IoSession session, Object message) throws Exception {
+    public void executeActionMapping(ActionData data, IoSession session, Object message, boolean ignoreNotReg) throws Exception {
         int action = data.getAction();
 //		log.info("检测处理器["+action+"]");
         if (!actionMapping.containsKey(action)) {
 //			throw new RuntimeException("动作处理器["+action+"]未注册");
-            for (SessionListener listener : listeners) {
-                listener.notRegAction(session, message);
+            if (!ignoreNotReg) {
+                for (SessionListener listener : listeners) {
+                    listener.notRegAction(session, message);
+                }
             }
             return;
         }

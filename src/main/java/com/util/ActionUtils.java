@@ -44,22 +44,33 @@ public class ActionUtils {
         methods.add(new ActionMethod().setValue(value).setMethod(method).setObject(object));
     }
 
-
-    public static void run(int value, Object... args) throws InvocationTargetException, IllegalAccessException {
+    /**
+     * 执行方法
+     * @param value 事件id
+     * @param args 参数
+     * @return 有注册方法被调用 返回true
+     */
+    public static boolean run(int value, Object... args) throws InvocationTargetException, IllegalAccessException {
         List<ActionMethod> methods = actionMap.get(value);
+        boolean result = false;
         if (methods != null) {
             for (ActionMethod method : methods) {
-                runMethod(method, args);
+                if(runMethod(method, args)) {
+                    result = true;
+                }
             }
         }
+        return result;
     }
 
-    private static void runMethod(ActionMethod method, Object... args) throws InvocationTargetException, IllegalAccessException {
+    private static boolean runMethod(ActionMethod method, Object... args) throws InvocationTargetException, IllegalAccessException {
         int len = args.length;
         int parameterCount = method.getMethod().getParameterCount();
         if (parameterCount == 0 || (parameterCount <= len && isVerify(method.getMethod().getParameterTypes(), args))) {
             method.run(args);
+            return true;
         }
+        return false;
     }
 
     private static boolean isVerify(Class<?>[] cls, Object... args) {
