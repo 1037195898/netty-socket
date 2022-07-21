@@ -35,7 +35,7 @@ public class Rijndael {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Rijndael.class);
 
-    private static final Map<String, Rijndael> AES_CACHES = new HashMap<String, Rijndael>();
+    private static final Map<String, Rijndael> AES_CACHES = new HashMap<>();
 
     /**
      * 算法名称 － {@code AES}。
@@ -723,7 +723,7 @@ public class Rijndael {
     /**
      * JCE支持的AES模式和填充方式枚举。
      */
-    public static enum AESMode {
+    public enum AESMode {
 
         /**
          * AES/CFB/NoPadding。
