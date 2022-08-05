@@ -30,7 +30,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
         this(null, null, channelHandler);
     }
 
-    public WebSocketChannelInitializer(IPipeline iPipeline, ChannelHandler[] channelHandler) {
+    public WebSocketChannelInitializer(IPipeline iPipeline, ChannelHandler... channelHandler) {
         this(null, iPipeline, channelHandler);
     }
 
@@ -109,6 +109,8 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
 
     }
 
+
 }
+
 
 
