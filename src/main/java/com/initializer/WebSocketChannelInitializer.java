@@ -27,7 +27,11 @@ public class WebSocketChannelInitializer extends ChannelInitializer<Channel> {
     private ChannelHandler[] channelHandler;
 
     public WebSocketChannelInitializer(ChannelHandler... channelHandler) {
-        this(null, channelHandler);
+        this(null, null, channelHandler);
+    }
+
+    public WebSocketChannelInitializer(IPipeline iPipeline, ChannelHandler[] channelHandler) {
+        this(null, iPipeline, channelHandler);
     }
 
     /**
