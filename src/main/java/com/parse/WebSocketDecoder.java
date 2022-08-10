@@ -2,10 +2,7 @@ package com.parse;
 
 import com.entity.GameInput;
 import com.socket.ActionData;
-import com.util.IOUtils;
-import com.util.SocketType;
-import com.util.SocketUtils;
-import com.util.ZlibUtil;
+import com.util.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
@@ -76,7 +73,8 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
             // 解密
             bytes = IOUtils.getAes().decrypt(bytes);
         }
-        ActionData<?> data = new ActionData<>(0);
+        System.out.println(Thread.currentThread().getName() + "|decoder");
+        ActionData<?> data = PoolUtils.getObject(ActionData.class);
 //        System.out.println("事件头="+data.getAction());
 //        System.out.println("获取了事件头后剩余的="+input.available());
 //        System.out.println("获取包头后的长度,"+input.available()+", "+buf.remaining());

@@ -1,5 +1,6 @@
 package com.entity;
 
+import com.interfaces.IPool;
 import lombok.Getter;
 
 import java.io.ByteArrayOutputStream;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Getter
-public class GameOutput {
+public class GameOutput implements IPool<GameOutput> {
 
     private ByteArrayOutputStream byteArrayOutputStream;
     private DataOutputStream outputStream;
@@ -32,6 +33,7 @@ public class GameOutput {
         return byteArrayOutputStream.toByteArray();
     }
 
+    @Override
     public GameOutput reset() {
         byteArrayOutputStream.reset();
         return this;

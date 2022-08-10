@@ -2,6 +2,7 @@ package com.decoder;
 
 import com.entity.GameInput;
 import com.entity.GameOutput;
+import com.util.PoolUtils;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -848,7 +849,7 @@ public class Rijndael {
         System.out.println("");
 
         System.out.println("CBC+CBC_PKCS5+++++++++++++++++++++++ byte Hex(16) +++++++++++++++++++++++++++++++++++");
-        GameOutput output = new GameOutput();
+        GameOutput output = PoolUtils.getObject(GameOutput.class);
         output.writeLong(1515);
         output.writeUTF("我来了");
         byte[] bytes = output.toByteArray();

@@ -8,6 +8,7 @@ import com.socket.ActionData;
 import com.socket.ClientAcceptor;
 import com.socket.IoSession;
 import com.socket.SessionListener;
+import com.util.PoolUtils;
 import io.netty.handler.timeout.IdleState;
 
 import java.nio.charset.StandardCharsets;
@@ -35,7 +36,7 @@ public class Client implements SessionListener {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("请输入：");
                 String msg = scanner.nextLine();
-                ActionData<?> action = new ActionData<>(100);
+                ActionData<?> action = PoolUtils.getObject(ActionData.class).setAction(100);
                 action.setBuf(msg.getBytes(StandardCharsets.UTF_8));
                 clientAcceptor.writeAndFlush(action);
             }

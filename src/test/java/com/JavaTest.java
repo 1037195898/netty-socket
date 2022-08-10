@@ -4,6 +4,7 @@ import com.socket.ActionData;
 import com.socket.IoSession;
 import com.util.ActionUtils;
 import com.util.IOUtils;
+import com.util.PoolUtils;
 import com.util.ZlibUtil;
 import com.web.WebHandler;
 import lombok.SneakyThrows;
@@ -28,7 +29,7 @@ public class JavaTest {
         ActionUtils.addAction(handler);
 
         ActionUtils.run(1,
-                new ActionData<>(1),
+                PoolUtils.getObject(ActionData.class).setAction(1),
                 new IoSession(null, null)
         );
 

@@ -77,7 +77,7 @@ public class ServerWeb implements SessionListener {
 
     @Override
     public void messageReceived(IoSession session, Object message) {
-        System.out.println("messageReceived:" + message);
+        System.out.println(Thread.currentThread().getName() + "|messageReceived:" + message);
     }
 
     @Override

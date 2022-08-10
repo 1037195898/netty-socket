@@ -4,6 +4,7 @@ import com.socket.ActionData;
 import com.socket.ActionEventManager;
 import com.util.ActionUtils;
 import com.util.IOUtils;
+import com.util.PoolUtils;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -49,6 +50,7 @@ public class MessageAdapter extends BaseChannelAdapter<ActionData<?>> {
 //            sessionVerify.put(ctx.channel().id().asLongText(), msg.getVerify());
         boolean result = ActionUtils.run(msg.getAction(), msg, IOUtils.getSession(ctx));
         actionEventManager.executeActionMapping(msg, IOUtils.getSession(ctx), msg, result);
+        PoolUtils.returnObject(msg);
 //        }
     }
 

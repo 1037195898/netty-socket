@@ -3,6 +3,7 @@ package com.parse;
 import com.entity.GameOutput;
 import com.socket.ActionData;
 import com.util.IOUtils;
+import com.util.PoolUtils;
 import com.util.ZlibUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -27,7 +28,7 @@ public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ActionData msg, ByteBuf out) throws Exception {
-        GameOutput gameOutput = new GameOutput();
+        GameOutput gameOutput = PoolUtils.getObject(GameOutput.class);
         try {
             gameOutput.writeLong(System.currentTimeMillis());// 发送当前服务器的时间
             gameOutput.writeInt(msg.getAction());
@@ -46,7 +47,7 @@ public class MessageEncoder extends MessageToByteEncoder<ActionData<?>> {
             out.writeInt(bytes.length);
             out.writeBytes(bytes);
         } finally {
-            gameOutput.close();
+            PoolUtils.returnObject(gameOutput);
         }
     }
 

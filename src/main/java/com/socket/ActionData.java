@@ -2,14 +2,13 @@ package com.socket;
 
 import com.entity.GameInput;
 import com.entity.GameOutput;
+import com.interfaces.IPool;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Data
-public class ActionData<T> {
+public class ActionData<T> implements IPool<ActionData<T>> {
 
     /**
      * 动作
@@ -27,6 +26,9 @@ public class ActionData<T> {
      * 如果存在  那么在发送的时候  会发送此id
      */
     private long sessionId;
+
+    public ActionData() {
+    }
 
     public ActionData(int action) {
         this.action = action;
@@ -52,6 +54,15 @@ public class ActionData<T> {
 
     public GameInput getInput() {
         return new GameInput(buf);
+    }
+
+    @Override
+    public ActionData<T> reset() {
+        this.action = 0;
+        this.verify = 0;
+        this.sessionId = 0;
+        this.buf = null;
+        return this;
     }
 
 }

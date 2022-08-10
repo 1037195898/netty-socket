@@ -4,6 +4,8 @@ import com.socket.ActionData;
 import com.socket.ActionEventManager;
 import com.socket.IoSession;
 import com.util.IOUtils;
+import com.util.PoolUtils;
+import com.util.SocketUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
@@ -69,7 +71,7 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                     Integer count = iosIdle.get(id);
                     if (count < 3) {
                         count++;
-                        ctx.writeAndFlush(new ActionData<>(1));
+                        ctx.writeAndFlush(PoolUtils.getObject(ActionData.class).setAction(SocketUtils.DEFAULT_IDLE_ACTION));
                         iosIdle.put(id, count);
                     } else {
                         iosIdle.remove(id);
@@ -78,7 +80,7 @@ public class BaseChannelAdapter<T> extends SimpleChannelInboundHandler<T> {
                     }
                 } else {
                     iosIdle.put(id, 1);
-                    ctx.writeAndFlush(new ActionData<>(1));
+                    ctx.writeAndFlush(PoolUtils.getObject(ActionData.class).setAction(SocketUtils.DEFAULT_IDLE_ACTION));
                 }
             }
             actionEventManager.getListeners().forEach(sessionListener -> sessionListener.sessionIdle(IOUtils.getSession(ctx), e.state()));

@@ -3,6 +3,7 @@ package com.parse;
 import com.entity.GameInput;
 import com.socket.ActionData;
 import com.util.IOUtils;
+import com.util.PoolUtils;
 import com.util.ZlibUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -23,6 +24,8 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
     public MessageDecoder(int maxFrameLength) {
         super(maxFrameLength, 0, Integer.BYTES);
     }
+
+
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
@@ -48,7 +51,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
         // 解密
         by = IOUtils.getAes().decrypt(by);
         GameInput input = new GameInput(by);
-        ActionData<?> data = new ActionData<>(0);
+        ActionData<?> data = PoolUtils.getObject(ActionData.class);
 //        System.out.println("事件头="+data.getAction());
 //        System.out.println("获取了事件头后剩余的="+input.available());
 //        System.out.println("获取包头后的长度,"+input.available()+", "+buf.remaining());
