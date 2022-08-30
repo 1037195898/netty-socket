@@ -55,6 +55,16 @@ public class PoolTest {
     public void test2() {
         ActionData actionData = new ActionData();
         PoolUtils.getPool(ActionData.class).returnObject(actionData);
+        PoolUtils.getPool(ActionData.class).returnObject(actionData);
+        System.out.println(PoolUtils.getNumIdle(ActionData.class));
+    }
+
+    @SneakyThrows
+    @Test
+    public void test3() {
+        ActionData<?> actionData = PoolUtils.getObject(ActionData.class);
+        PoolUtils.getPool(ActionData.class).returnObject(actionData);
+        PoolUtils.getPool(ActionData.class).returnObject(actionData);
         System.out.println(PoolUtils.getNumIdle(ActionData.class));
     }
 

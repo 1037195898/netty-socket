@@ -13,8 +13,7 @@ public class GameInput {
     private ByteArrayInputStream byteArrayInputStream;
 
     public GameInput(byte[] buf) {
-        byteArrayInputStream = new ByteArrayInputStream(buf);
-        inputStream = new DataInputStream(byteArrayInputStream);
+        this(new ByteArrayInputStream(buf));
     }
 
     public GameInput(ByteArrayInputStream inputStream) {

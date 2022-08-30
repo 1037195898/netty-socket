@@ -15,8 +15,7 @@ public class GameOutput implements IPool<GameOutput> {
     private DataOutputStream outputStream;
 
     public GameOutput() {
-        byteArrayOutputStream = new ByteArrayOutputStream();
-        this.outputStream = new DataOutputStream(byteArrayOutputStream);
+        this(new ByteArrayOutputStream());
     }
 
     public GameOutput(ByteArrayOutputStream outputStream) {
