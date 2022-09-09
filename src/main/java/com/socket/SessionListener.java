@@ -1,6 +1,5 @@
 package com.socket;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 
 public interface SessionListener<T> {
