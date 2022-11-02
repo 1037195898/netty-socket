@@ -3,8 +3,11 @@ package com.socket;
 import com.entity.GameInput;
 import com.entity.GameOutput;
 import com.interfaces.IPool;
+import com.util.PoolUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.time.Duration;
 
 @Accessors(chain = true)
 @Data
@@ -63,6 +66,21 @@ public class ActionData<T> implements IPool<ActionData<T>> {
         this.sessionId = 0;
         this.buf = null;
         return this;
+    }
+
+    public static ActionData get() throws Exception {
+        return PoolUtils.getObject(ActionData.class);
+    }
+    public static ActionData get(long borrowMaxWaitMillis) throws Exception {
+        return PoolUtils.getObject(ActionData.class, borrowMaxWaitMillis);
+    }
+    public static ActionData get(Duration borrowMaxWaitDuration) throws Exception {
+        return PoolUtils.getObject(ActionData.class, borrowMaxWaitDuration);
+    }
+
+    /** 生成数据并回收 */
+    public void returnObject() {
+        PoolUtils.returnObject(this);
     }
 
 }
