@@ -1,11 +1,13 @@
 package com.entity;
 
 import com.interfaces.IPool;
+import com.util.PoolUtils;
 import lombok.Getter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 @Getter
@@ -184,5 +186,31 @@ public class GameOutput implements IPool<GameOutput> {
         }
         return this;
     }
+
+    public static GameOutput get() throws Exception {
+        return PoolUtils.getObject(GameOutput.class);
+    }
+    public static GameOutput get(long borrowMaxWaitMillis) throws Exception {
+        return PoolUtils.getObject(GameOutput.class, borrowMaxWaitMillis);
+    }
+    public static GameOutput get(Duration borrowMaxWaitDuration) throws Exception {
+        return PoolUtils.getObject(GameOutput.class, borrowMaxWaitDuration);
+    }
+
+    /** 生成数据并回收 */
+    public byte[] toByteReturn() {
+        byte[] b = this.toByteArray();
+        PoolUtils.returnObject(this);
+        return b;
+    }
+
+
+
+
+
+
+
+
+
 
 }
