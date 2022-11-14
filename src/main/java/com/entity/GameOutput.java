@@ -1,6 +1,7 @@
 package com.entity;
 
 import com.interfaces.IPool;
+import com.interfaces.IWrite;
 import com.util.PoolUtils;
 import lombok.Getter;
 
@@ -149,6 +150,17 @@ public class GameOutput implements IPool<GameOutput> {
 
     public GameOutput write(byte[] bytes, int offset, int length) throws IOException {
         outputStream.write(bytes, offset, length);
+        return this;
+    }
+
+    /**
+     * 写入实体
+     * @param write
+     * @return
+     * @throws IOException
+     */
+    public GameOutput writeEntity(IWrite write) throws IOException {
+        write.write(this);
         return this;
     }
 
