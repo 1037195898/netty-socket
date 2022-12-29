@@ -166,7 +166,10 @@ public class PoolUtils {
         public void destroyObject(PooledObject<T> p) throws Exception {
             try {
                 T t = p.getObject();
-                MethodUtils.invokeMethod(t, false, "close");
+                Method method = MethodUtils.getMatchingAccessibleMethod(t.getClass(), "close");
+                if (method != null) {
+                    method.invoke(t);
+                }
             } catch (Exception e) {
             }
         }
