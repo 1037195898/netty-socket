@@ -17,10 +17,9 @@ object ActionUtils {
 
     private val actionMap = ConcurrentHashMap<Int, MutableList<ActionMethod>>()
 
-
     @JvmStatic
     fun <T : Any> addAction(obj: T) {
-        obj.javaClass.kotlin.functions.forEach { funs ->
+        obj::class.functions.forEach { funs ->
             funs.findAnnotation<SocketAction>()?.let {
                 addAction(it, funs, obj)
             }
